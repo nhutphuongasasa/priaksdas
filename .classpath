@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="quanlithuvien/src/main/java"/>
+	<classpathentry kind="src" path="quanlithuvien/src/test/java"/>
+	<classpathentry kind="lib" path="C:/Users/NHUT PHUONG/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/2.0.9.RELEASE/spring-boot-autoconfigure-2.0.9.RELEASE.jar" sourcepath="C:/Users/NHUT PHUONG/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/2.0.9.RELEASE/spring-boot-autoconfigure-2.0.9.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.archivename" value="spring-boot-autoconfigure-2.0.9.RELEASE.jar"/>
+			<attribute name="maven.groupId" value="org.springframework.boot"/>
+			<attribute name="maven.artifactId" value="spring-boot-autoconfigure"/>
+			<attribute name="maven.version" value="2.0.9.RELEASE"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/NHUT PHUONG/.m2/repository/org/springframework/spring-web/5.0.13.RELEASE/spring-web-5.0.13.RELEASE.jar" sourcepath="C:/Users/NHUT PHUONG/.m2/repository/org/springframework/spring-web/5.0.13.RELEASE/spring-web-5.0.13.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.archivename" value="spring-web-5.0.13.RELEASE.jar"/>
+			<attribute name="maven.groupId" value="org.springframework"/>
+			<attribute name="maven.artifactId" value="spring-web"/>
+			<attribute name="maven.version" value="5.0.13.RELEASE"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="quanlithuvien/target/classes"/>
+</classpath>
