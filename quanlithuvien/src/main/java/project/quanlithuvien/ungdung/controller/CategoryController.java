@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import project.quanlithuvien.ungdung.Model.CategoryEntity;
+import project.quanlithuvien.ungdung.DTO.CategoryDTO;
 import project.quanlithuvien.ungdung.Service.CategoryService;
 
 @RestController
@@ -35,12 +35,13 @@ public class CategoryController {
 
     @PutMapping("/{nameToUpdate}")
     public String updateCategory(@PathVariable String nameToUpdate, @RequestBody String name) {
+        System.out.println("da nhan duoc");
         return categoryService.updateCategory(nameToUpdate, name);
         
     }
 
     @GetMapping
-    public List<CategoryEntity> findAllCategory() {
+    public List<CategoryDTO> findAllCategory() {
         return categoryService.findAllCategory();
     }
 }

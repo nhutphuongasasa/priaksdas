@@ -22,7 +22,7 @@ import lombok.Setter;
 public class ReaderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reader_id; 
+    private Integer reader_id; 
 
     @Column(name="name",nullable = false)
     private String name; 
@@ -33,16 +33,18 @@ public class ReaderEntity {
     @Column(name="phone",nullable = false, unique = true)
     private String phone; 
     
-    @Column(name="address",nullable = false, unique = true)
+    @Column(name="address",nullable = false)
     private String address; 
 
     @Column(name = "registration_date", nullable = false)
-    private LocalDate registration_date; 
+    private LocalDate registration_date=LocalDate.now(); 
 
-    @Column(name = "active", nullable = false)
-    private String active;
+    @Column(name = "status", nullable = false)
+    private String status;
 
     @OneToMany(mappedBy = "reader",fetch=FetchType.LAZY)
     private List<LoanEntity> loans= new ArrayList<>(); 
+
+    
 
 }

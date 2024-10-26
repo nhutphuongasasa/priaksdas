@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +19,7 @@ import project.quanlithuvien.ungdung.Service.LibraryStaffService;
 
 @RestController
 @RequestMapping("/api/library-staff")
-public class LibraryStaffRepositoryController {
+public class LibraryStaffController {
     @Autowired
     private LibraryStaffService libraryStaffService;
 
@@ -32,13 +33,13 @@ public class LibraryStaffRepositoryController {
         return libraryStaffService.deleteLibraryStaff(libraryStaffRequestDTO);
     }
 
-    @PutMapping
-    public String updateLibraryStaff(@RequestBody LibraryStaffRequestDTO libraryStaffRequestDTO) {
-        return libraryStaffService.updateLibraryStaff(libraryStaffRequestDTO);
+    @PutMapping("/{emailToUpdate}")
+    public String updateLibraryStaff(@RequestBody LibraryStaffRequestDTO libraryStaffRequestDTO,@PathVariable String emailToUpdate) {
+        return libraryStaffService.updateLibraryStaff(libraryStaffRequestDTO,emailToUpdate);
     }
 
     @GetMapping
-    public List<LibraryStaffDTO> findAllLibraryStaff() {
-        return libraryStaffService.findAllLibraryStaff();
+    public List<LibraryStaffDTO> findAllLibraryStaff(@RequestBody LibraryStaffRequestDTO libraryStaffRequestDTO) {
+        return libraryStaffService.findAllLibraryStaff(libraryStaffRequestDTO);
     }
 }

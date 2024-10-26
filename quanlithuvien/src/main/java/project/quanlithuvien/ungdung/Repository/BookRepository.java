@@ -10,6 +10,6 @@ import project.quanlithuvien.ungdung.Model.CategoryEntity;
 public interface BookRepository {
     String addBook(BookEntity bookEntity,List<CategoryEntity> CategoryEntities);
     String deleteBook(String isbn);
-    String updateBook(BookRequestDTO bookRequestDTO,List<CategoryEntity> CategoryEntities);
+    String updateBook(String isbnToUpdate,BookRequestDTO bookRequestDTO,List<CategoryEntity> CategoryEntities);
     List<BookEntity> findAllBook(BookSearchBuilder bookSearchBuilder);
 }

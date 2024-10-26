@@ -24,7 +24,7 @@ public class CategoryEntity implements Comparable<CategoryEntity>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="category_id")
-    private int category_id;
+    private Integer category_id;
 
     @Column(name="name",nullable = false,unique=true)
     private String name;

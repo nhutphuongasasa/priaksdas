@@ -24,7 +24,7 @@ import lombok.Setter;
 public class LoanEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long loan_id; 
+    private Integer loan_id; 
 
     @ManyToOne
     @JoinColumn(name = "reader_id", nullable = false)
@@ -34,8 +34,11 @@ public class LoanEntity {
     @JoinColumn(name = "book_id", nullable = false)
     private BookEntity book; 
 
+    @Column(name="return_date")
+    private LocalDate return_date;
+
     @Column(name = "loan_date", nullable = false)
-    private LocalDate loan_date; 
+    private LocalDate loan_date;
 
     @Column(name="status",nullable = false)
     @Enumerated(EnumType.STRING)

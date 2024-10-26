@@ -7,7 +7,7 @@ import project.quanlithuvien.ungdung.DTO.ReaderRequestDTO;
 
 public interface  ReaderService {
     String addReader(ReaderRequestDTO readerRequestDTO);
-    String updateReader(ReaderRequestDTO readerRequestDTO);
+    String updateReader(ReaderRequestDTO readerRequestDTO,String emailToUpdate);
     String deleteReader(ReaderRequestDTO readerRequestDTO);
     List<ReaderDTO> findAllReader(ReaderRequestDTO readerRequestDTO);
 }

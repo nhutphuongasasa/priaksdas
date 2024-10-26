@@ -17,7 +17,7 @@ import lombok.Setter;
 public class LibraryStaffEntity implements Comparable<LibraryStaffEntity>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long staff_id; 
+    private Integer staff_id; 
 
     @Column(name = "name", nullable = false)
     private String name; 
@@ -25,14 +25,14 @@ public class LibraryStaffEntity implements Comparable<LibraryStaffEntity>{
     @Column(name = "email", nullable = false, unique = true)
     private String email; 
 
-    @Column(name = "phone")
+    @Column(name = "phone", nullable = false,unique = true)
     private String phone; 
 
     @Column(name = "position")
     private String position; 
 
     @Column(name = "hire_date", nullable = false)
-    private LocalDate hireDate; 
+    private LocalDate hireDate=LocalDate.now(); 
 
     @Column(name="status",nullable=false)
     private String status;

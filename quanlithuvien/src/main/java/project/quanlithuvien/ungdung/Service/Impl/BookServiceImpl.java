@@ -44,14 +44,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public String updateBook(BookRequestDTO bookRequestDTO) {
+    public String updateBook(String isbnToUpdate,BookRequestDTO bookRequestDTO) {
         // BookEntity bookEntity = bookRequestDTOConverter.toBookEntity(bookRequestDTO);
         System.out.println("vao ham service update");
         List<CategoryEntity> categoryEntities = new ArrayList<>();
         for(String item : bookRequestDTO.getCategory()){
             categoryEntities.add(categoryEntityConverter.toCategory(item));
         }
-        String result = BookRepository.updateBook(bookRequestDTO, categoryEntities);
+        String result = BookRepository.updateBook(isbnToUpdate,bookRequestDTO, categoryEntities);
         return result;
     }
 
@@ -62,9 +62,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDTO> findAllBook(Map<String, String> param) {
-        BookSearchBuilder bookSearchBuilder = bookSearchBuilderConverter.toBookSearchBuilder(param);
-        System.out.println(bookSearchBuilder.getPublicationYearFrom());
+    public List<BookDTO> findAllBook(Map<String, String> param,List<String> categories) {
+        BookSearchBuilder bookSearchBuilder = bookSearchBuilderConverter.toBookSearchBuilder(param,categories);
         List<BookEntity> bookEntities = BookRepository.findAllBook(bookSearchBuilder);
         List<BookDTO> result = new ArrayList<>();
         for(BookEntity item : bookEntities){

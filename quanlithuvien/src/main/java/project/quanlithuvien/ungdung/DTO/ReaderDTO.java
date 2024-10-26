@@ -13,5 +13,5 @@ public class ReaderDTO {
     private String phone; 
     private String address; 
     private LocalDate registration_date; 
-    private String active;
+    private String status;
 }

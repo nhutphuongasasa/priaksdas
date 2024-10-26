@@ -37,9 +37,9 @@ public class ReaderServiceImpl implements  ReaderService{
     }
 
     @Override
-    public String updateReader(ReaderRequestDTO readerRequestDTO) {
+    public String updateReader(ReaderRequestDTO readerRequestDTO,String emailToUpdate) {
         ReaderEntity readerEntity = readerEntityConverter.toReaderEntity(readerRequestDTO);
-        String result = readerRepository.updateReader(readerEntity);
+        String result = readerRepository.updateReader(readerEntity,emailToUpdate);
         return result;
     }
 

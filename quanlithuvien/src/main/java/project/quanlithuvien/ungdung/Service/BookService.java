@@ -8,8 +8,8 @@ import project.quanlithuvien.ungdung.DTO.BookRequestDTO;
 
 public interface BookService {
     String addBook(BookRequestDTO bookRequestDTO);
-    String updateBook(BookRequestDTO bookRequestDTO);
+    String updateBook(String isbnToUpdate,BookRequestDTO bookRequestDTO);
     String deleteBook(String isbn);
-    List<BookDTO> findAllBook(Map<String,String> param);
+    List<BookDTO> findAllBook(Map<String,String> param,List<String> categories);
 
 }

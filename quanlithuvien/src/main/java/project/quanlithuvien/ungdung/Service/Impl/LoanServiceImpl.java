@@ -1,5 +1,6 @@
 package project.quanlithuvien.ungdung.Service.Impl;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,28 @@ public class LoanServiceImpl implements LoanService{
     @Override
     public List<LoanDTO> findAllLoan(LoanRequestDTO loanRequestDTO){
         List<LoanDTO> result = loanRepository.findAllLoan(loanRequestDTO);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        for(LoanDTO item : result){
+            if(item.getReturn_date()==null){
+                item.setReturn_dateCopy("");
+            }
+            else{
+                item.setReturn_dateCopy(item.getReturn_date().format(formatter));
+            }
+            item.setLoan_dateCopy(item.getLoan_date().format(formatter));
+        }
         return result;
     }
+
+    @Override
+    public String deleteloan(String isbn, String email) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String updateLoan(String isbn, String email,LoanRequestDTO loanRequestDTO) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    
 }

@@ -6,7 +6,7 @@ import project.quanlithuvien.ungdung.Model.ReaderEntity;
 
 public interface  ReaderRepository {
     String addReader(ReaderEntity readerEntity);
-    String updateReader(ReaderEntity readerEntity);
+    String updateReader(ReaderEntity readerEntity,String emailToUpdate);
     String deleteReader(ReaderEntity readerEntity);
     List<ReaderEntity> findAllReader(ReaderEntity readerEntity);
 }

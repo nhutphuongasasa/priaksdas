@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import project.quanlithuvien.ungdung.DTO.CategoryDTO;
+import project.quanlithuvien.ungdung.Model.BookEntity;
 import project.quanlithuvien.ungdung.Model.CategoryEntity;
 import project.quanlithuvien.ungdung.Repository.CategoryRepository;
 import project.quanlithuvien.ungdung.Utils.CategoryEntityFind;
@@ -38,25 +40,29 @@ public class CategoryRepositoryImpl implements CategoryRepository{
         if(categoryEntity == null){
             return "category does not exist";
         }
+        for(BookEntity item : categoryEntity.getBooks()){
+            item.getCategories().remove(categoryEntity);
+        }
+        categoryEntity.getBooks().clear();
         EntityManager.remove(categoryEntity);
         return "Successfull";
     }
 
     @Override
-    public List<CategoryEntity> findAllCategory() {
-        String sql ="select ca.name , ca.category_id from categories ca ";
-        Query query = EntityManager.createNativeQuery(sql, CategoryEntity.class);
+    public List<CategoryDTO> findAllCategory() {
+        String sql ="select ca.name from categories ca ";
+        Query query = EntityManager.createNativeQuery(sql, CategoryDTO.class);
         return query.getResultList();
     }
 
     @Override
     public String updateCategory(String nameToUpdate, String name) {
-        CategoryEntity categoryEntity = EntityManager.find(CategoryEntity.class, nameToUpdate);
+        CategoryEntity categoryEntity = categoryEntityFind.findAllByName(nameToUpdate);
         if(categoryEntity == null){
             return "category does not exist";
         }
-        CategoryEntity categoryEntityCopy = new CategoryEntity();
-        EntityManager.merge(categoryEntityCopy);
+        categoryEntity.setName(name);
+        EntityManager.merge(categoryEntity);
         return "Successfull";
     }
     

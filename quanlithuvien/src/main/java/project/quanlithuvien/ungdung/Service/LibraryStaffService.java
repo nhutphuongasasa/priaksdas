@@ -8,6 +8,6 @@ import project.quanlithuvien.ungdung.DTO.LibraryStaffRequestDTO;
 public interface LibraryStaffService {
     String addLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO);
     String deleteLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO);
-    String updateLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO);
-    List<LibraryStaffDTO> findAllLibraryStaff();
+    String updateLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO,String emailToUpdate);
+    List<LibraryStaffDTO> findAllLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO);
 }

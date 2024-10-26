@@ -23,7 +23,7 @@ import lombok.Setter;
 public class BookEntity {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long book_id;
+    private Integer book_id;
 
     @Column(name="title",nullable=false)
     private String title;

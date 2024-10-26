@@ -12,6 +12,8 @@ public class LibraryStaffDTOConverter {
     private ModelMapper modelMapper;
     public LibraryStaffDTO toLibraryStaffDTO(LibraryStaffEntity libraryStaffEntity){
         LibraryStaffDTO libraryStaffDTO = modelMapper.map(libraryStaffEntity, LibraryStaffDTO.class);
+        libraryStaffDTO.setHire_date(libraryStaffEntity.getHireDate());
+        libraryStaffDTO.setActive(libraryStaffEntity.getStatus());
         return libraryStaffDTO;
     }
 }

@@ -11,9 +11,7 @@ import project.quanlithuvien.ungdung.Model.ReaderEntity;
 @Component
 public class LoanEntityConverter {
     public LoanEntity toLoanEntity(BookEntity bookEntity,ReaderEntity readerEntity){
-         // Lấy ngày hiện tại
         LocalDate currentDate = LocalDate.now();
-
         LoanEntity loanEntity = LoanEntity.builder()
                                         .book(bookEntity)
                                         .reader(readerEntity)

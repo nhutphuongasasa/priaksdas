@@ -12,6 +12,7 @@ public class ReaderEntityConverter {
 	private ModelMapper modelMapper;
     public ReaderEntity toReaderEntity(ReaderRequestDTO readerRequestDTO){
         ReaderEntity readerEntity = modelMapper.map(readerRequestDTO,ReaderEntity.class);
+        System.out.println(readerEntity.getStatus()+readerEntity.getRegistration_date());
         return readerEntity;
     }
 }

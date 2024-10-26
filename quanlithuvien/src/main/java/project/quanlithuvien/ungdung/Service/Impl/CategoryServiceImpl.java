@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import project.quanlithuvien.ungdung.Model.CategoryEntity;
+import project.quanlithuvien.ungdung.DTO.CategoryDTO;
 import project.quanlithuvien.ungdung.Repository.CategoryRepository;
 import project.quanlithuvien.ungdung.Service.CategoryService;
 @Service
@@ -28,10 +28,10 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public List<CategoryEntity> findAllCategory() {
-        List<CategoryEntity> CategoryEntities = categoryRepository.findAllCategory();
-        Collections.sort(CategoryEntities);
-        return CategoryEntities;
+    public List<CategoryDTO> findAllCategory() {
+        List<CategoryDTO> CategoryDTOs = categoryRepository.findAllCategory();
+        Collections.sort(CategoryDTOs);
+        return CategoryDTOs;
     }
 
     @Override

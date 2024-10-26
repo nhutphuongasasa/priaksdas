@@ -78,11 +78,16 @@ public class BookRepositoryImpl implements BookRepository {
     }
     //buoc nguoi dung nhap isbn
     @Override
-    public String updateBook(BookRequestDTO bookRequestDTO,List<CategoryEntity> CategoryEntities ) {
+    public String updateBook(String isbnToUpdate,BookRequestDTO bookRequestDTO,List<CategoryEntity> CategoryEntities ) {
         try {
-            BookEntity bookEntityCopy = bookEntityFind.findByIsbn(bookRequestDTO.getIsbn());
+            BookEntity bookEntityCopy = bookEntityFind.findByIsbn(isbnToUpdate);
             if(bookEntityCopy == null){
                 return "Failed ! sach chua ton tai";
+            }
+            
+            BookEntity bookEntity = bookEntityFind.findByIsbn(bookRequestDTO.getIsbn());
+            if(!bookRequestDTO.getIsbn().equals(isbnToUpdate)&&bookEntity!=null){
+                return "Failed ! isbn already exist";
             }
             //them book vao category
             List<CategoryEntity> CategoryEntities2=new ArrayList<>(); 
@@ -95,10 +100,9 @@ public class BookRepositoryImpl implements BookRepository {
                     CategoryEntities2.add(x);
                 }
                 else{
-                    System.out.println("da co");
                     boolean check =true;//nhung category chua co book trong do
                     for(BookEntity y : item.getBooks()){
-                        if(y.getIsbn().equals(bookEntityCopy.getIsbn())){
+                        if(y.getIsbn().equals(isbnToUpdate)){
                             check=false;
                         }
                     }
@@ -108,9 +112,7 @@ public class BookRepositoryImpl implements BookRepository {
                     CategoryEntities2.add(item);
                 }
             }
-            
             bookEntityCopy = bookEntityConverter.toBookEntity(bookRequestDTO, bookEntityCopy);
-            System.out.println("toi luc update" +bookEntityCopy.getBook_id());
             bookEntityCopy.setCategories(CategoryEntities2);
             entityManager.merge(bookEntityCopy);
             return "Successful";
@@ -130,9 +132,13 @@ public class BookRepositoryImpl implements BookRepository {
         if (existingBook == null) {
             return "Sách không tồn tại.";
         }
-
+        //loai bo toan bo quan he giua book va category
         try {
-            entityManager.remove(existingBook); //co casecader nen se xoa ban ghi lien quan trong bookcategories
+            for(CategoryEntity item : existingBook.getCategories()){
+                item.getBooks().remove(existingBook);
+            }
+            existingBook.getCategories().clear();
+            entityManager.remove(existingBook); 
             return "Successful";
         } catch (Exception e) {
             return "Failed";
@@ -166,7 +172,10 @@ public class BookRepositoryImpl implements BookRepository {
 				}
 			}
             if(bookSearchBuilder.getCategory()!=null){
-                ss.append(" and ca.name like '%"+bookSearchBuilder.getCategory()+"%' ");
+                for(String item : bookSearchBuilder.getCategory()){
+                    ss.append(" and ca.name like '%"+item+"%' ");
+                }
+                
             }
         } catch(IllegalAccessException | IllegalArgumentException | SecurityException e) {
             e.printStackTrace();

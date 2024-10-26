@@ -29,8 +29,8 @@ public class BookController {
     }
 
     @PutMapping
-    public String updateBook(@RequestBody BookRequestDTO bookRequestDTO) {
-        return bookService.updateBook(bookRequestDTO);
+    public String updateBook(@RequestBody BookRequestDTO bookRequestDTO,@PathVariable String isbnToUpdate) {
+        return bookService.updateBook(isbnToUpdate, bookRequestDTO);
     }
 
     @DeleteMapping("/{isbn}")
@@ -39,8 +39,8 @@ public class BookController {
     }
 
     @GetMapping
-    public List<BookDTO> findAllBook(@RequestParam Map<String, String> param) {
-        return bookService.findAllBook(param);
+    public List<BookDTO> findAllBook(@RequestParam Map<String, String> param,@RequestParam List<String> categories) {
+        return bookService.findAllBook(param,categories);
     }
 }
 
