@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class LoanDTO {
+    private Integer loan_id;
     private String name;
     private String phone;
     private String email;

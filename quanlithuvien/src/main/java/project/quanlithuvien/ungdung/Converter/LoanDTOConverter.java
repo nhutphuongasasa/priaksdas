@@ -18,6 +18,7 @@ public class LoanDTOConverter {
         loanDTO.setLoan_date(loanEntity.getLoan_date());
         loanDTO.setQuantity(loanEntity.getQuantity());
         loanDTO.setStatus(loanEntity.getStatus());
+        loanDTO.setLoan_id(loanEntity.getLoan_id());
         return loanDTO;
     }
 }
