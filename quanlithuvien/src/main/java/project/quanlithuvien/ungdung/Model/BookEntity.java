@@ -41,7 +41,7 @@ public class BookEntity {
     private String isbn;
 
     @Column(name="quantity",nullable = false)
-    private int quantity;
+    private Integer quantity;
 
     @Column(name="available_quantity",nullable = false)
     private int available_quantity;

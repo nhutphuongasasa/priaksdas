@@ -14,13 +14,13 @@ public class LoanDTO {
     private String title;
     private String author;
     private String isbn;
-    private LoanStatus status; 
+    private String status; 
     private LocalDate loan_date;
     private LocalDate return_date;
-    private String loan_dateCopy;
-    private String return_dateCopy;
-    public enum LoanStatus {
-        ĐÃ_TRẢ,
-        CHƯA_TRẢ,
-    }
+    private Integer quantity;
+    // public enum LoanStatus {
+    //     ĐÃ_TRẢ,
+    //     CHƯA_TRẢ,
+    // }
+    
 }

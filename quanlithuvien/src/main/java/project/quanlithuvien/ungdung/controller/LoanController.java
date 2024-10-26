@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,12 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 import project.quanlithuvien.ungdung.DTO.LoanDTO;
 import project.quanlithuvien.ungdung.DTO.LoanRequestDTO;
 import project.quanlithuvien.ungdung.Repository.LoanRepository;
+import project.quanlithuvien.ungdung.Service.LoanService;
 
 @RestController
 @RequestMapping("/loans")
 public class LoanController {
     @Autowired
     private LoanRepository loanRepository;
+    @Autowired
+    private LoanService LoanService;
 
     @PostMapping
     public String addLoan(@RequestBody LoanRequestDTO loanRequestDTO) {
@@ -30,26 +32,22 @@ public class LoanController {
     }
 
     @PutMapping
-    public String completeLoan(@RequestBody LoanRequestDTO loanRequestDTO) {
-        String result = loanRepository.completeLoan(loanRequestDTO);
+    public String completeLoan(@RequestBody List<Integer> loan_id) {
+        String result = loanRepository.completeLoan(loan_id);
         return result;
     }
 
     @GetMapping
     public List<LoanDTO> findAllLoan(@RequestBody LoanRequestDTO loanRequestDTO) {
-        List<LoanDTO> loans = loanRepository.findAllLoan(loanRequestDTO);
+        List<LoanDTO> loans = LoanService.findAllLoan(loanRequestDTO); 
         return loans;
     }
 
-    @DeleteMapping("/{isbn}/{email}")
-    public ResponseEntity<String> deleteLoan(@PathVariable String isbn, @PathVariable String email) {
-        String result = loanRepository.deleteLoan(isbn, email);
+    @DeleteMapping
+    public ResponseEntity<String> deleteLoan(@RequestBody List<Integer> loan_id) {
+        String result = loanRepository.deleteLoan(loan_id);
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping("/{isbn}/{email}")
-    public ResponseEntity<String> updateLoan(@PathVariable String isbn, @PathVariable String email, @RequestBody LoanRequestDTO loanRequestDTO) {
-        String result = loanRepository.updateLoan(isbn, email, loanRequestDTO);
-        return ResponseEntity.ok(result);
-    }
+    
 }

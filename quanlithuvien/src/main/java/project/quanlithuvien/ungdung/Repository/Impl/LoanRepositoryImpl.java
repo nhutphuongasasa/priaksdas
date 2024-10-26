@@ -1,7 +1,6 @@
 package project.quanlithuvien.ungdung.Repository.Impl;
 
 import java.lang.reflect.Field;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +11,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import project.quanlithuvien.ungdung.Converter.LoanEntityConverter;
-import project.quanlithuvien.ungdung.DTO.LoanDTO;
 import project.quanlithuvien.ungdung.DTO.LoanRequestDTO;
 import project.quanlithuvien.ungdung.Model.BookEntity;
 import project.quanlithuvien.ungdung.Model.LoanEntity;
-import project.quanlithuvien.ungdung.Model.LoanEntity.LoanStatus;
 import project.quanlithuvien.ungdung.Model.ReaderEntity;
 import project.quanlithuvien.ungdung.Repository.LoanRepository;
 import project.quanlithuvien.ungdung.Utils.BookEntityFind;
@@ -43,91 +40,44 @@ public class LoanRepositoryImpl implements LoanRepository{
         if(bookEntity==null){
             return "book does not exits";
         }
-        LoanEntity loanEntity = loanEntityConverter.toLoanEntity(bookEntity, readerEntity);
+        if(loanRequestDTO.getQuantity()>bookEntity.getAvailable_quantity()){
+            return "Not enough books available";
+        }
+        else{
+            bookEntity.setAvailable_quantity(bookEntity.getAvailable_quantity()-loanRequestDTO.getQuantity());
+        }
+        LoanEntity loanEntity = loanEntityConverter.toLoanEntity(bookEntity, readerEntity,loanRequestDTO.getQuantity());
         entityManager.merge(loanEntity);
         return "Successful";
     }
 
-    public StringBuilder query(ReaderEntity readerEntity,BookEntity bookEntity){
-        StringBuilder sql = new StringBuilder(" select lo.loan_id,lo.book_id,lo.reader_id,lo.loan_date,lo.status from loans lo ");
-        sql.append(" inner join books bo on bo.book_id=lo.book_id ");
-        sql.append(" inner join readers re on re.reader_id=lo.reader_id ");
-        sql.append(" where ");
-        sql.append(" lo.book_id = "+bookEntity.getBook_id()+" ");
-        sql.append(" and lo.book_id = "+readerEntity.getReader_id()+" ");
-        return sql;
-    }
-
     @Override
-    public String completeLoan(LoanRequestDTO loanRequestDTO) {
-        ReaderEntity readerEntity = readerEntityFind.readerEntityFindByEmail(loanRequestDTO.getEmail());
-        if(readerEntity==null){
-            return "user does not exist";
-        }
-        BookEntity bookEntity = bookEntityFind.findByIsbn(loanRequestDTO.getIsbn());
-        if(bookEntity==null){
-            return "book does not exits";
-        }
-        StringBuilder sql = new StringBuilder();
-        sql.append(query(readerEntity, bookEntity));
-        Query query= entityManager.createNativeQuery(sql.toString(),LoanEntity.class);
-        List<LoanEntity> loanEntities = query.getResultList();
-        if(loanEntities == null){
-            return "Fail! The user has not borrowed this book";
-        }
-        for(LoanEntity item : loanEntities){
-            if(item.getStatus() == LoanStatus.CHƯA_TRẢ){
-                item.setStatus(LoanStatus.ĐÃ_TRẢ);
-                item.setReturn_date(LocalDate.now());
-                entityManager.merge(item);
-                return "successfull";
+    public String completeLoan(List<Integer> loan_id) {//lam table co nut tra sach 
+        for(Integer item : loan_id){
+            LoanEntity loanEntity = entityManager.find(LoanEntity.class, item);
+            if(loanEntity.getStatus().equals("CHƯA_TRẢ")){
+                loanEntity.setStatus("ĐÃ_TRẢ");
+                entityManager.merge(loanEntity);
             }
         }
-        return "Fail! The user has returned all the books";
-    }
-
-    public LoanEntity findByLoanId(int book_id,int reader_id){
-        String sql = "select * from loans where lo.book_id = "+book_id+" and lo.reader_id = "+reader_id+" ";
-        Query query = entityManager.createNativeQuery(sql,LoanEntity.class);
-        return (LoanEntity)query.getSingleResult();
-    }
-
-    @Override
-    public String deleteLoan(String isbn, String email) {
-        BookEntity bookEntity = bookEntityFind.findByIsbn(isbn);
-        if(bookEntity==null){
-            return "No information";
-        }
-        ReaderEntity readerEntity = readerEntityFind.readerEntityFindByEmail(email);
-        if(readerEntity==null){
-            return "No information";
-        }
-        LoanEntity loanEntity = findByLoanId(bookEntity.getBook_id(),readerEntity.getReader_id());
-        entityManager.remove(loanEntity);
         return "Successfull";
     }
 
     @Override
-    public String updateLoan(String isbnToupdate, String emailToUpdate, LoanRequestDTO loanRequestDTO) {
-        BookEntity bookEntity = bookEntityFind.findByIsbn(isbnToupdate);
-        if(bookEntity==null){
-            return "No information";
+    public String deleteLoan(List<Integer> loan_id) {
+        for(Integer item : loan_id){
+            LoanEntity loanEntity = entityManager.find(LoanEntity.class, item);
+            if(loanEntity.getStatus().equals("ĐÃ_TRẢ")){
+                entityManager.remove(loanEntity);
+            }
         }
-        ReaderEntity readerEntity = readerEntityFind.readerEntityFindByEmail(emailToUpdate);
-        if(readerEntity==null){
-            return "No information";
-        }
-        LoanEntity loanEntity = findByLoanId(bookEntity.getBook_id(),readerEntity.getReader_id());
-        loanEntity.setBook(bookEntityFind.findByIsbn(loanRequestDTO.getIsbn()));
-        loanEntity.setReader(readerEntityFind.readerEntityFindByEmail(loanRequestDTO.getEmail()));
-        entityManager.merge(loanEntity);
         return "Successfull";
     }
 
     public StringBuilder joinQuery(){
         StringBuilder s = new StringBuilder(" ");
-        s.append("inner join books bo on bo.book_id=lo.book_id");
-        s.append("inner join readers re on re.reader_id=lo.reader_id");
+        s.append(" inner join books bo on bo.book_id=lo.book_id ");
+        s.append(" inner join readers re on re.reader_id=lo.reader_id ");
         return s;
     }
 
@@ -150,7 +100,14 @@ public class LoanRepositoryImpl implements LoanRepository{
 						ss.append(" and bo."+x.getName()+" like "+"'%"+value+"%' ");
 					}
 				}
+                else if(fieldName.equals("quantity")){
+                    Object value =x.get(loanRequestDTO);
+					if(value!=null) {
+						ss.append(" and lo."+x.getName()+" = "+value+" ");
+					}
+                }
 			} 
+
         } catch(IllegalAccessException | IllegalArgumentException | SecurityException e) {
             e.printStackTrace();
 		}
@@ -158,12 +115,12 @@ public class LoanRepositoryImpl implements LoanRepository{
     }
 
     @Override
-    public List<LoanDTO> findAllLoan(LoanRequestDTO loanRequestDTO) {
-        StringBuilder sql = new StringBuilder("select re.name,re.phone,re.email,bo.title,bo.author,bo.isbn,lo.status,lo.return_date from loans lo ");
+    public List<LoanEntity> findAllLoan(LoanRequestDTO loanRequestDTO) {
+        StringBuilder sql = new StringBuilder("select lo.book_id,lo.reader_id, lo.status,lo.loan_date,lo.return_date,lo.quantity,lo.loan_id from loans lo ");
         sql.append(joinQuery());
         sql.append(normalQuery(loanRequestDTO));
-        sql.append("group by lo.id");
-        Query query= entityManager.createNativeQuery(sql.toString(),LoanDTO.class);
+        sql.append("group by lo.loan_id");
+        Query query= entityManager.createNativeQuery(sql.toString(),LoanEntity.class);
         return  query.getResultList();
     }
 
