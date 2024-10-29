@@ -21,4 +21,11 @@ public class LibraryStaffEntityFind {
         Query query = entityManager.createNativeQuery(sql,LibraryStaffEntity.class);
         return (LibraryStaffEntity)query.getResultList().stream().findFirst().orElse(null);
     }
+
+    public LibraryStaffEntity findLibraryStaffEntityByUserName(String user_name){
+        String sql = "select * from library_staff where library_staff.user_name like '"+user_name+"' ";
+        Query query = entityManager.createNativeQuery(sql,LibraryStaffEntity.class);
+        return (LibraryStaffEntity)query.getResultList().stream().findFirst().orElse(null);
+    }
+
 }

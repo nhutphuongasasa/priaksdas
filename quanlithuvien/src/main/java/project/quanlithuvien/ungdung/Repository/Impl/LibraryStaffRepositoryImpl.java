@@ -18,13 +18,14 @@ import project.quanlithuvien.ungdung.Repository.LibraryStaffRepository;
 import project.quanlithuvien.ungdung.Utils.LibraryStaffEntityFind;
 @Repository
 @Transactional
-public class LibraryStaffRepositoryImpl implements LibraryStaffRepository{
+public class LibraryStaffRepositoryImpl implements LibraryStaffRepository {
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
     private LibraryStaffEntityConverter libraryStaffEntityConverter;
     @Autowired
     private LibraryStaffEntityFind libraryStaffEntityFind;
+
     @Override
     public String addLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO) {//nhap het
         LibraryStaffEntity libraryStaffEntity1 = libraryStaffEntityFind.findLibraryStaffEntityByEmail(libraryStaffRequestDTO.getEmail());
@@ -43,6 +44,10 @@ public class LibraryStaffRepositoryImpl implements LibraryStaffRepository{
         LibraryStaffEntity libraryStaffEntity2 = libraryStaffEntityFind.findLibraryStaffEntityByPhone(libraryStaffRequestDTO.getPhone());
         if(libraryStaffEntity2!=null){
             return "phone already exists";
+        }
+        LibraryStaffEntity libraryStaffEntity3 = libraryStaffEntityFind.findLibraryStaffEntityByUserName(libraryStaffRequestDTO.getUser_name());
+        if(libraryStaffEntity3!=null){
+            return "user name already exist";
         }
         LibraryStaffEntity libraryStaffEntityCopy = libraryStaffEntityConverter.toLibraryStaffEntity(libraryStaffRequestDTO);
         libraryStaffEntityCopy.setStatus("Active");

@@ -39,14 +39,6 @@ public class LoanEntity {
     @Column(name = "quantity", nullable = false) 
     private Integer quantity; 
 
-    // @Column(name="status",nullable = false)
-    // @Enumerated(EnumType.STRING)
-    // private LoanStatus status; 
-
-    // public enum LoanStatus {
-    //     ĐÃ_TRẢ,
-    //     CHƯA_TRẢ,
-    // }
     @Column(name="status",nullable = false)
     private String status; 
 }

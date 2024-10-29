@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import project.quanlithuvien.ungdung.Builder.StaffSearchBuilder;
@@ -14,6 +15,7 @@ import project.quanlithuvien.ungdung.DTO.LibraryStaffRequestDTO;
 import project.quanlithuvien.ungdung.Model.LibraryStaffEntity;
 import project.quanlithuvien.ungdung.Repository.LibraryStaffRepository;
 import project.quanlithuvien.ungdung.Service.LibraryStaffService;
+import project.quanlithuvien.ungdung.Utils.LibraryStaffEntityFind;
 
 @Service
 public class LibraryStaffServiceImpl implements LibraryStaffService{
@@ -23,11 +25,30 @@ public class LibraryStaffServiceImpl implements LibraryStaffService{
     private LibraryStaffRepository labraryStaffRepository;
     @Autowired
     private StaffSearchBuilderConverter staffSearchBuilderConverter;
+    @Autowired
+    private LibraryStaffEntityFind libraryStaffEntityFind;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Override
     public String addLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO) {
         String result = labraryStaffRepository.addLibraryStaff(libraryStaffRequestDTO);
         return  result;
     }
+
+    @Override
+    public String Login(String userName, String password) {
+        LibraryStaffEntity existingStaff = libraryStaffEntityFind.findLibraryStaffEntityByUserName(userName);
+        if(existingStaff==null){
+            return "user or password incorrect";
+        }
+    
+        if(!passwordEncoder.matches(password,existingStaff.getPassword())) {
+            return "user or password incorrect";
+        }
+        return "Successful";
+    }
+
+    
 
     @Override
     public String deleteLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO) {

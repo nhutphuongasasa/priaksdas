@@ -10,4 +10,5 @@ public interface LibraryStaffService {
     String deleteLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO);
     String updateLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO,String emailToUpdate);
     List<LibraryStaffDTO> findAllLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO);
+    String Login(String userName,String password);
 }
