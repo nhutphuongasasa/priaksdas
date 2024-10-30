@@ -3,10 +3,17 @@ package project.quanlithuvien;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+import project.quanlithuvien.ungdung.show.Main;
+
+@SpringBootApplication(scanBasePackages = "project.quanlithuvien")
 public class QuanlithuvienApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(QuanlithuvienApplication.class, args);
+		new Thread(() -> {
+            SpringApplication.run(QuanlithuvienApplication.class, args);
+        }).start();
+		Main main = new Main();
+    	main.setVisible(true);
+		// SpringApplication.run(QuanlithuvienApplication.class, args);
 	}
 
 }

@@ -13,10 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
-@Getter
-@Setter
+
 @Entity
 @Table(name = "categories")
 public class CategoryEntity implements Comparable<CategoryEntity>{
@@ -38,6 +35,30 @@ public class CategoryEntity implements Comparable<CategoryEntity>{
     @Override
     public int compareTo(CategoryEntity o) {
         return this.getName().compareTo(o.getName());
+    }
+
+    public void setCategory_id(Integer category_id) {
+        this.category_id = category_id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setBooks(List<BookEntity> books) {
+        this.books = books;
+    }
+
+    public Integer getCategory_id() {
+        return category_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<BookEntity> getBooks() {
+        return books;
     }
     
     

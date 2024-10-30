@@ -13,14 +13,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
 
-@Setter
-@Getter
+
+
 @Entity
 @Table(name="books")
 public class BookEntity {
+
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer book_id;
@@ -51,5 +50,87 @@ public class BookEntity {
 
     @OneToMany(mappedBy = "book",fetch=FetchType.LAZY)
     private List<LoanEntity> loans = new ArrayList<>();
+
+    public void setBook_id(Integer book_id) {
+        this.book_id = book_id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public void setPublication_year(Long publication_year) {
+        this.publication_year = publication_year;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setAvailable_quantity(int available_quantity) {
+        this.available_quantity = available_quantity;
+    }
+
+    public void setCategories(List<CategoryEntity> categories) {
+        this.categories = categories;
+    }
+
+    public void setLoans(List<LoanEntity> loans) {
+        this.loans = loans;
+    }
+
+    public Integer getBook_id() {
+        return book_id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public Long getPublication_year() {
+        return publication_year;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public int getAvailable_quantity() {
+        return available_quantity;
+    }
+
+    public List<CategoryEntity> getCategories() {
+        return categories;
+    }
+
+    public List<LoanEntity> getLoans() {
+        return loans;
+    }
+
+    
 
 }

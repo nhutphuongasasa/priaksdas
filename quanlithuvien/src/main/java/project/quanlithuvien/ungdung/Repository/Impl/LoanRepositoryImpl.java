@@ -31,7 +31,7 @@ public class LoanRepositoryImpl implements LoanRepository{
     @Autowired
     private BookEntityFind bookEntityFind;
     @Override
-    public String addLoan(LoanRequestDTO loanRequestDTO) {//buoc nguoi dung nhap email phone isbn
+    public String addLoan(LoanRequestDTO loanRequestDTO) {//buoc nguoi dung nhap het nhat dinh phai co email phone
         ReaderEntity readerEntity = readerEntityFind.readerEntityFindByEmail(loanRequestDTO.getEmail());
         if(readerEntity==null){
             return "user does not exist";
@@ -52,7 +52,7 @@ public class LoanRepositoryImpl implements LoanRepository{
     }
 
     @Override
-    public String completeLoan(List<Integer> loan_id) {//lam table co nut tra sach 
+    public String completeLoan(List<Integer> loan_id) {//lam table co nut tra sach khi check vao se gui id ve va ham se thuc hien xoa
         for(Integer item : loan_id){
             LoanEntity loanEntity = entityManager.find(LoanEntity.class, item);
             if(loanEntity.getStatus().equals("CHƯA_TRẢ")){
@@ -64,7 +64,7 @@ public class LoanRepositoryImpl implements LoanRepository{
     }
 
     @Override
-    public String deleteLoan(List<Integer> loan_id) {
+    public String deleteLoan(List<Integer> loan_id) {//lam table co nut tra sach khi check vao se gui id ve va ham se thuc hien xoa
         for(Integer item : loan_id){
             LoanEntity loanEntity = entityManager.find(LoanEntity.class, item);
             if(loanEntity.getStatus().equals("ĐÃ_TRẢ")){
@@ -115,7 +115,7 @@ public class LoanRepositoryImpl implements LoanRepository{
     }
 
     @Override
-    public List<LoanEntity> findAllLoan(LoanRequestDTO loanRequestDTO) {
+    public List<LoanEntity> findAllLoan(LoanRequestDTO loanRequestDTO) {//co the nhap hoac bo bat ki field nao
         StringBuilder sql = new StringBuilder("select lo.book_id,lo.reader_id, lo.status,lo.loan_date,lo.return_date,lo.quantity,lo.loan_id from loans lo ");
         sql.append(joinQuery());
         sql.append(normalQuery(loanRequestDTO));

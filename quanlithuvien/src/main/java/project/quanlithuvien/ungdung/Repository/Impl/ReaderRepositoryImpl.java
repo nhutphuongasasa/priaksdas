@@ -99,7 +99,7 @@ public class ReaderRepositoryImpl implements  ReaderRepository{
     }
 
     @Override
-    public List<ReaderEntity> findAllReader(ReaderEntity readerEntity) {
+    public List<ReaderEntity> findAllReader(ReaderEntity readerEntity) {//co the nhap hoac bo bat ki field nao
         StringBuilder sql = new StringBuilder("select * from readers re ");
         sql.append(query(readerEntity));
         Query query= entityManager.createNativeQuery(sql.toString(),ReaderEntity.class);

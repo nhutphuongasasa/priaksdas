@@ -27,7 +27,7 @@ public class LibraryStaffRepositoryImpl implements LibraryStaffRepository {
     private LibraryStaffEntityFind libraryStaffEntityFind;
 
     @Override
-    public String addLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO) {//nhap het
+    public String addLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO) {//admin nhap het
         LibraryStaffEntity libraryStaffEntity1 = libraryStaffEntityFind.findLibraryStaffEntityByEmail(libraryStaffRequestDTO.getEmail());
         if(libraryStaffEntity1!=null&&libraryStaffEntity1.getPhone().equals(libraryStaffRequestDTO.getPhone())){
             if(libraryStaffEntity1.getStatus().equals("Inactive")){
@@ -56,7 +56,7 @@ public class LibraryStaffRepositoryImpl implements LibraryStaffRepository {
     }
 
     @Override
-    public String deleteLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO) {//buoc nguoi dung nhap email va phone
+    public String deleteLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO) {//buoc nguoi dung nhap email va phone do email va phone unique
         LibraryStaffEntity libraryStaffEntity = libraryStaffEntityFind.findLibraryStaffEntityByEmail(libraryStaffRequestDTO.getEmail());
         if(libraryStaffEntity==null){
             return "Staff does not exists";
@@ -110,7 +110,7 @@ public class LibraryStaffRepositoryImpl implements LibraryStaffRepository {
     }
 
     @Override
-    public List<LibraryStaffEntity> findAllLibraryStaff(StaffSearchBuilder staffSearchBuilder) {
+    public List<LibraryStaffEntity> findAllLibraryStaff(StaffSearchBuilder staffSearchBuilder) {//co the nhap hoac khong bat ki field nao
         StringBuilder sql = new StringBuilder("select * from library_staff li where li.status like 'active' ");
         sql.append(normalQuery(staffSearchBuilder));
         System.out.println(sql);

@@ -22,7 +22,7 @@ public class CategoryRepositoryImpl implements CategoryRepository{
     @Autowired
     private CategoryEntityFind categoryEntityFind;
     @Override
-    public String addCategory(String name) {
+    public String addCategory(String name) {//nguoi dung nhap buoc nhap name
         CategoryEntity categoryEntity = categoryEntityFind.findAllByName(name);
         if(categoryEntity != null){
             return "category already exists";
@@ -34,7 +34,7 @@ public class CategoryRepositoryImpl implements CategoryRepository{
     }
 
     @Override
-    public String deleteCategory(String name) {
+    public String deleteCategory(String name) {//nguoi dung nhap name can xoa
         System.out.println(name);
         CategoryEntity categoryEntity = categoryEntityFind.findAllByName(name);
         if(categoryEntity == null){
@@ -49,13 +49,13 @@ public class CategoryRepositoryImpl implements CategoryRepository{
     }
 
     @Override
-    public List<CategoryDTO> findAllCategory() {
+    public List<CategoryDTO> findAllCategory() {//nguoi dung co the nhap name hoac khong
         String sql ="select ca.name from categories ca ";
         Query query = EntityManager.createNativeQuery(sql, CategoryDTO.class);
         return query.getResultList();
     }
 
-    @Override
+    @Override//nguoi dung nhap nam can update va name moi
     public String updateCategory(String nameToUpdate, String name) {
         CategoryEntity categoryEntity = categoryEntityFind.findAllByName(nameToUpdate);
         if(categoryEntity == null){
