@@ -13,6 +13,6 @@ public class BookDTO {
     private String isbn;
     private String category;
     private int quantity;
-    private String available_qantity;
+    private String available_quantity;
     
 }

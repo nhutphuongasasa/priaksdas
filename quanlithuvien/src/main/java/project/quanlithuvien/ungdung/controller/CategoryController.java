@@ -35,7 +35,7 @@ public class CategoryController {
 
     @PutMapping("/{nameToUpdate}")
     public String updateCategory(@PathVariable String nameToUpdate, @RequestBody String name) {
-        System.out.println("da nhan duoc");
+        System.out.println(name);
         return categoryService.updateCategory(nameToUpdate, name);
         
     }

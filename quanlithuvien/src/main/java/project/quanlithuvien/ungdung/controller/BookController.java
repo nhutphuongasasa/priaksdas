@@ -28,7 +28,7 @@ public class BookController {
         return bookService.addBook(bookRequestDTO);
     }
 
-    @PutMapping
+    @PutMapping("/{isbnToUpdate}")
     public String updateBook(@RequestBody BookRequestDTO bookRequestDTO,@PathVariable String isbnToUpdate) {
         return bookService.updateBook(isbnToUpdate, bookRequestDTO);
     }
