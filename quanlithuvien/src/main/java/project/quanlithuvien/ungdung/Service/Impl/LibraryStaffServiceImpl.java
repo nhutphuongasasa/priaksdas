@@ -59,7 +59,6 @@ public class LibraryStaffServiceImpl implements LibraryStaffService{
     @Override
     public List<LibraryStaffDTO> findAllLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO) {
         StaffSearchBuilder staffSearchBuilder = staffSearchBuilderConverter.toStaffSearchBuilder(libraryStaffRequestDTO);
-        System.out.println("vao cau lenh service");
         List<LibraryStaffEntity> libraryStaffEntities = labraryStaffRepository.findAllLibraryStaff(staffSearchBuilder);
         List<LibraryStaffDTO> result = new ArrayList<>();
         for(LibraryStaffEntity item : libraryStaffEntities){

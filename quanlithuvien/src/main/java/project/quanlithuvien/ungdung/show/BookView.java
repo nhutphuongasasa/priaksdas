@@ -206,6 +206,7 @@ public class BookView extends JFrame {
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
                 if (response.statusCode() == 200) {
+                    System.out.println("Search success");
                     tableModel.addRow(new Object[]{
                         bookRequestDTO.getTitle(),
                         bookRequestDTO.getAuthor(),
@@ -311,8 +312,9 @@ public class BookView extends JFrame {
     }
 }
 
-    //tim kiem sach (them text field)
+
     private JPanel createSearchPanel() {
+
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm sách"));
     
@@ -321,6 +323,7 @@ public class BookView extends JFrame {
         searchButton.setBackground(new Color(0, 155, 155));
         searchButton.setForeground(Color.WHITE);
     
+        // Sự kiện tìm kiếm
         searchButton.addActionListener(e -> {
             String isbn = searchField.getText().trim();
             if (!isbn.isEmpty()) {
@@ -331,21 +334,86 @@ public class BookView extends JFrame {
         });
     
         JPanel searchInputPanel = new JPanel(new BorderLayout());
-        searchInputPanel.add(new JLabel("Nhập ISBN để tìm kiếm:"), BorderLayout.WEST);
-        searchInputPanel.add(searchField, BorderLayout.CENTER);
-        searchInputPanel.add(searchButton, BorderLayout.EAST);
     
-        searchPanel.add(searchInputPanel, BorderLayout.NORTH);
+        // Các trường thông tin sách
+        JTextField isbnField = new JTextField();
+        JTextField titleField = new JTextField();
+        JTextField authorField = new JTextField();
+        JTextField publisherField = new JTextField();
+        JTextField publicationYearField = new JTextField();
+        JTextField categoryField = new JTextField();
+        JTextField quantityField = new JTextField();
+        JTextField availableQuantityField = new JTextField();
     
+        // Panel chứa các trường thông tin sách
+        JPanel bookInfoPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+    
+        // ISBN Field
+        gbc.gridx = 0; gbc.gridy = 0;
+        bookInfoPanel.add(new JLabel("ISBN:"), gbc);
+        gbc.gridx = 1;
+        bookInfoPanel.add(isbnField, gbc);
+    
+        gbc.gridx = 0; gbc.gridy = 1;
+        bookInfoPanel.add(new JLabel("Title:"), gbc);
+        gbc.gridx = 1;
+        bookInfoPanel.add(titleField, gbc);
+    
+        gbc.gridx = 0; gbc.gridy = 2;
+        bookInfoPanel.add(new JLabel("Author:"), gbc);
+        gbc.gridx = 1;
+        bookInfoPanel.add(authorField, gbc);
+    
+        gbc.gridx = 0; gbc.gridy = 3;
+        bookInfoPanel.add(new JLabel("Publisher:"), gbc);
+        gbc.gridx = 1;
+        bookInfoPanel.add(publisherField, gbc);
+    
+        gbc.gridx = 0; gbc.gridy = 4;
+        bookInfoPanel.add(new JLabel("Publication Year:"), gbc);
+        gbc.gridx = 1;
+        bookInfoPanel.add(publicationYearField, gbc);
+    
+        gbc.gridx = 0; gbc.gridy = 5;
+        bookInfoPanel.add(new JLabel("Category:"), gbc);
+        gbc.gridx = 1;
+        bookInfoPanel.add(categoryField, gbc);
+    
+        gbc.gridx = 0; gbc.gridy = 6;
+        bookInfoPanel.add(new JLabel("Quantity:"), gbc);
+        gbc.gridx = 1;
+        bookInfoPanel.add(quantityField, gbc);
+    
+        gbc.gridx = 0; gbc.gridy = 7;
+        bookInfoPanel.add(new JLabel("Available Quantity:"), gbc);
+        gbc.gridx = 1;
+        bookInfoPanel.add(availableQuantityField, gbc);
+    
+        // Thêm các panel vào searchPanel
+        // searchPanel.add(searchInputPanel, BorderLayout.NORTH);
+        // searchPanel.add(bookInfoPanel, BorderLayout.CENTER);
+        // BookRequestDTO book = new BookRequestDTO();
+        // book.setIsbn(isbnField.getText());
+        // book.setTitle(titleField.getText());
+        // book.setAuthor(authorField.getText());
+        // book.setPublisher(publisherField.getText());
+        // book.setPublication_year(Long.parseLong(publicationYearField.getText()));
+        // book.setCategory(List.of(categoryField.getText()));
+        // book.setQuantity(Integer.parseInt(quantityField.getText()));
+        // book.setAvailable_quantity(Integer.parseInt(availableQuantityField.getText())); => các thông tin tìm kiếm của nguời dùng sau khi nhập
         return searchPanel;
     }
+    
     
     // Phương thức tìm kiếm sách qua ISBN và cập nhật bảng(xong)
     private void searchBookByISBN(String isbn) {
         sendBookSearchRequest(null, null, null, null, isbn, null, null, null);
     }
     
-    //chinh sua sach
+    //chinh sua sach(xong)
     private JPanel createEditBookPanel() {
         JPanel editBookPanel = new JPanel(new GridBagLayout());
         editBookPanel.setBorder(BorderFactory.createTitledBorder("Chỉnh sửa sách"));
@@ -355,7 +423,7 @@ public class BookView extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
     
         // Trường nhập ISBN để tìm sách
-        JTextField isbnField = new JTextField();
+        JTextField isbnField = new JTextField(40);
         JButton searchButton = new JButton("Tìm sách");
     
         gbc.gridx = 0; gbc.gridy = 0;
@@ -366,52 +434,59 @@ public class BookView extends JFrame {
         editBookPanel.add(searchButton, gbc);
     
         // Các trường nhập liệu khác (ngoại trừ ISBN)
-        JTextField titleField = new JTextField();
-        JTextField authorField = new JTextField();
-        JTextField publisherField = new JTextField();
-        JTextField publicationYearField = new JTextField();
-        JTextField categoryField = new JTextField();
-        JTextField quantityField = new JTextField();
-        JTextField availableQuantityField = new JTextField();
+        JTextField newIsbnField = new JTextField(40);
+        JTextField titleField = new JTextField(40);
+        JTextField authorField = new JTextField(40);
+        JTextField publisherField = new JTextField(40);
+        JTextField publicationYearField = new JTextField(40);
+        JTextField categoryField = new JTextField(40);
+        JTextField quantityField = new JTextField(40);
+        JTextField availableQuantityField = new JTextField(40);
     
         // Thêm các nhãn và trường nhập liệu vào giao diện, ban đầu không cho chỉnh sửa
         gbc.gridx = 0; gbc.gridy = 1;
+        editBookPanel.add(new JLabel("New ISBN:"), gbc);
+        gbc.gridx = 1;
+        editBookPanel.add(newIsbnField, gbc);
+        newIsbnField.setEditable(false);
+
+        gbc.gridx = 0; gbc.gridy =2;
         editBookPanel.add(new JLabel("Title:"), gbc);
         gbc.gridx = 1;
         editBookPanel.add(titleField, gbc);
         titleField.setEditable(false);
     
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 3;
         editBookPanel.add(new JLabel("Author:"), gbc);
         gbc.gridx = 1;
         editBookPanel.add(authorField, gbc);
         authorField.setEditable(false);
     
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0; gbc.gridy =4;
         editBookPanel.add(new JLabel("Publisher:"), gbc);
         gbc.gridx = 1;
         editBookPanel.add(publisherField, gbc);
         publisherField.setEditable(false);
     
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0; gbc.gridy = 5;
         editBookPanel.add(new JLabel("Publication Year:"), gbc);
         gbc.gridx = 1;
         editBookPanel.add(publicationYearField, gbc);
         publicationYearField.setEditable(false);
     
-        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridx = 0; gbc.gridy = 6;
         editBookPanel.add(new JLabel("Category:"), gbc);
         gbc.gridx = 1;
         editBookPanel.add(categoryField, gbc);
         categoryField.setEditable(false);
     
-        gbc.gridx = 0; gbc.gridy = 6;
+        gbc.gridx = 0; gbc.gridy = 7;
         editBookPanel.add(new JLabel("Quantity:"), gbc);
         gbc.gridx = 1;
         editBookPanel.add(quantityField, gbc);
         quantityField.setEditable(false);
     
-        gbc.gridx = 0; gbc.gridy = 7;
+        gbc.gridx = 0; gbc.gridy = 8;
         editBookPanel.add(new JLabel("Available Quantity:"), gbc);
         gbc.gridx = 1;
         editBookPanel.add(availableQuantityField, gbc);
@@ -421,11 +496,11 @@ public class BookView extends JFrame {
         JButton editBookButton = new JButton("Chỉnh sửa");
         editBookButton.setBackground(new Color(0, 155, 155));
         editBookButton.setForeground(Color.WHITE);
-        gbc.gridx = 1; gbc.gridy = 8;
+        gbc.gridx = 1; gbc.gridy = 9;
         editBookPanel.add(editBookButton, gbc);
         editBookButton.setEnabled(false); // Ban đầu tắt nút chỉnh sửa
     
-        // Sự kiện khi nhấn nút "Tìm sách" them textfield isbn
+        // Sự kiện khi nhấn nút "Tìm sách"
         searchButton.addActionListener(e -> {
             String isbn = isbnField.getText().trim();
             if (isbn.isEmpty()) {
@@ -433,7 +508,7 @@ public class BookView extends JFrame {
                 return;
             }
     
-            // Tìm sách qua API
+            // Tìm sách qua API(xong)
             try {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
@@ -464,6 +539,7 @@ public class BookView extends JFrame {
                     });
             
                     // Điền thông tin vào các trường và cho phép chỉnh sửa
+                    newIsbnField.setText(book.getIsbn());
                     titleField.setText(book.getTitle());
                     authorField.setText(book.getAuthor());
                     publisherField.setText(book.getPublisher());
@@ -473,6 +549,7 @@ public class BookView extends JFrame {
                     availableQuantityField.setText(String.valueOf(book.getAvailable_quantity()));
     
                     // Cho phép chỉnh sửa các trường và bật nút chỉnh sửa
+                    newIsbnField.setEditable(true);
                     titleField.setEditable(true);
                     authorField.setEditable(true);
                     publisherField.setEditable(true);
@@ -494,11 +571,11 @@ public class BookView extends JFrame {
         editBookButton.addActionListener(e -> {
             // Tạo DTO với dữ liệu từ các trường nhập
             BookRequestDTO bookRequestDTO = new BookRequestDTO();
+            bookRequestDTO.setIsbn(newIsbnField.getText());
             bookRequestDTO.setTitle(titleField.getText());
             bookRequestDTO.setAuthor(authorField.getText());
             bookRequestDTO.setPublisher(publisherField.getText());
             bookRequestDTO.setPublication_year(Long.parseLong(publicationYearField.getText()));
-            bookRequestDTO.setIsbn(isbnField.getText()); // Không chỉnh sửa ISBN, lấy từ trường tìm kiếm
             bookRequestDTO.setCategory(List.of(categoryField.getText()));
             bookRequestDTO.setQuantity(Integer.parseInt(quantityField.getText()));
             bookRequestDTO.setAvailable_quantity(Integer.parseInt(availableQuantityField.getText()));

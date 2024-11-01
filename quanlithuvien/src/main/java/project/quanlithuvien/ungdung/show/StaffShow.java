@@ -9,14 +9,16 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.net.URLEncoder;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,9 +30,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import project.quanlithuvien.ungdung.DTO.LibraryStaffDTO;
 import project.quanlithuvien.ungdung.DTO.LibraryStaffRequestDTO;
 
 public class StaffShow extends JFrame {
@@ -53,7 +55,7 @@ public class StaffShow extends JFrame {
         mainPanel = new JPanel(cardLayout);
 
         // Bảng hiển thị nhân viên
-        tableModel = new DefaultTableModel(new Object[]{"ID", "Name", "Position", "Email"}, 0);
+        tableModel = new DefaultTableModel(new Object[]{"Name", "Email","Phone","Position","Hire_date","Active"}, 0);
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -100,8 +102,8 @@ public class StaffShow extends JFrame {
         this.add(splitPane, BorderLayout.CENTER);
         this.setVisible(true);
     }
-
-   private JPanel createAddStaffPanel() {
+    //them
+    private JPanel createAddStaffPanel() {
     JPanel addStaffPanel = new JPanel(new GridBagLayout());
     addStaffPanel.setBorder(BorderFactory.createTitledBorder("Thêm nhân viên mới"));
 
@@ -113,7 +115,10 @@ public class StaffShow extends JFrame {
     JTextField nameField = new JTextField();
     JTextField emailField = new JTextField();
     JTextField phoneField = new JTextField();
-    JTextField positionField = new JTextField();
+    // JTextField positionField = new JTextField();
+    String[] positions = {"Staff"};
+    JComboBox<String> positionField = new JComboBox<>(positions);
+    positionField.setSelectedItem("Staff");
     JTextField userNameField = new JTextField();
     JPasswordField passwordField = new JPasswordField();
 
@@ -154,18 +159,17 @@ public class StaffShow extends JFrame {
         libraryStaffRequestDTO.setName(nameField.getText().trim());
         libraryStaffRequestDTO.setEmail(emailField.getText().trim());
         libraryStaffRequestDTO.setPhone(phoneField.getText().trim());
-        libraryStaffRequestDTO.setPosition(positionField.getText().trim());
+        libraryStaffRequestDTO.setPosition(positionField.getSelectedItem().toString());
         libraryStaffRequestDTO.setUser_name(userNameField.getText().trim());
-        libraryStaffRequestDTO.setPassword(new String(passwordField.getPassword()).trim());
+        libraryStaffRequestDTO.setPassword(new String(passwordField.getPassword().toString()).trim());
 
         // Gửi yêu cầu thêm nhân viên
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonRequest = objectMapper.writeValueAsString(libraryStaffRequestDTO);
-
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8081/api/staff/add")) // Địa chỉ API của bạn
+                .uri(URI.create("http://localhost:8081/api/library-staff")) // Địa chỉ API của bạn
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest))
                 .build();
@@ -174,11 +178,11 @@ public class StaffShow extends JFrame {
 
             if (response.statusCode() == 200) {
                 JOptionPane.showMessageDialog(addStaffPanel, "Thêm nhân viên thành công!");
-                // Xóa thông tin trong các trường nhập liệu
+                
                 nameField.setText("");
                 emailField.setText("");
                 phoneField.setText("");
-                positionField.setText("");
+                positionField.setSelectedItem("staff");
                 userNameField.setText("");
                 passwordField.setText("");
             } else {
@@ -195,46 +199,49 @@ public class StaffShow extends JFrame {
     gbc.gridx = 1; gbc.gridy = 6;
     addStaffPanel.add(addStaffButton, gbc);
 
-    // Nút in thông tin nhân viên
+    // Nút xem danh sách nhân viên
     JButton viewStaffButton = new JButton("Xem danh sách nhân viên");
     viewStaffButton.addActionListener(e -> {
-        // Gửi yêu cầu lấy danh sách nhân viên
-        try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8081/api/staff/all")) // Địa chỉ API của bạn
-                .header("Content-Type", "application/json")
-                .GET()
-                .build();
+        // Gửi yêu cầu lấy toan bo danh sách nhân viên
+    try {
+        HttpClient client = HttpClient.newHttpClient();
+        String url = sendDtaffSearchRequest(null,null,null,null,null,null);
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url)) // Địa chỉ API của bạn
+            .header("Content-Type", "application/json")
+            .GET()
+            .build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
-                // Chuyển đổi phản hồi JSON thành danh sách nhân viên
-                ObjectMapper objectMapper = new ObjectMapper();
-                List<LibraryStaffRequestDTO> staffList = objectMapper.readValue(response.body(),
-                        new TypeReference<List<LibraryStaffRequestDTO>>() {});
+        if (response.statusCode() == 200) {
+            // Chuyển đổi phản hồi JSON thành danh sách nhân viên
+            ObjectMapper objectMapper = new ObjectMapper();
+            // List<LibraryStaffDTO> staffList = objectMapper.readValue(response.body(),new TypeReference<List<LibraryStaffDTO>>() {});
+
+            List<LibraryStaffDTO> staffList = objectMapper.readValue(response.body(),objectMapper.getTypeFactory().constructCollectionType(List.class, LibraryStaffDTO.class));
             
-                // Làm sạch bảng trước khi thêm dữ liệu mới
-                tableModel.setRowCount(0);
+            // Làm sạch bảng trước khi thêm dữ liệu mới
+            tableModel.setRowCount(0);
             
-                // Hiển thị thông tin nhân viên
-                for (LibraryStaffRequestDTO staff : staffList) {
-                    tableModel.addRow(new Object[]{
-                        staff.getName(),
-                        staff.getEmail(),
-                        staff.getPhone(),
-                        staff.getPosition(),
-                        staff.getUser_name()
-                    });
-                }
-            } else {
-                JOptionPane.showMessageDialog(addStaffPanel, "Không thể lấy danh sách nhân viên: " + response.body());
+            // Hiển thị thông tin nhân viên
+            for (LibraryStaffDTO staff : staffList) {
+                tableModel.addRow(new Object[]{
+                    staff.getName(),
+                    staff.getEmail(),
+                    staff.getPhone(),
+                    staff.getPosition(),
+                    staff.getHire_date(),
+                    staff.getActive()
+                });
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(addStaffPanel, "Có lỗi xảy ra: " + ex.getMessage());
+        } else {
+            JOptionPane.showMessageDialog(addStaffPanel, "Không thể lấy danh sách nhân viên: " + response.body());
         }
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(addStaffPanel, "Có lỗi xảy ra: " + ex.getMessage());
+    }
     });
 
     viewStaffButton.setBackground(new Color(0, 155, 155));
@@ -246,6 +253,37 @@ public class StaffShow extends JFrame {
 }
 
 
+//in danh sach nhan vien
+public String sendDtaffSearchRequest(String name,String email,String phone,String position,String password,String user_name){
+    StringBuilder uriBuilder = new StringBuilder("http://localhost:8081/api/library-staff?");
+    if(name==null&&email==null&&phone==null&&position==null&&password==null&&user_name==null){
+        uriBuilder.append("name=&email=&phone=&position=&user_name=&password=");
+    }
+    if (name != null && !name.isEmpty()) {
+        uriBuilder.append("name=").append(URLEncoder.encode(name, StandardCharsets.UTF_8)).append("&");
+    }
+    if (email != null && !email.isEmpty()) {
+        uriBuilder.append("email=").append(URLEncoder.encode(email, StandardCharsets.UTF_8)).append("&");
+    }
+    if (phone != null && !phone.isEmpty()) {
+        uriBuilder.append("phone=").append(URLEncoder.encode(phone, StandardCharsets.UTF_8)).append("&");
+    }
+    if (position != null && !position.isEmpty()) {
+        uriBuilder.append("position=").append(URLEncoder.encode(position, StandardCharsets.UTF_8)).append("&");
+    }
+    if (user_name != null && !user_name.isEmpty()) {
+        uriBuilder.append("user_name=").append(URLEncoder.encode(user_name, StandardCharsets.UTF_8)).append("&");
+    }
+    if (password != null && !password.isEmpty()) {
+        uriBuilder.append("password=").append(URLEncoder.encode(password, StandardCharsets.UTF_8)).append("&");
+    }
+    if (uriBuilder.charAt(uriBuilder.length() - 1) == '&') {
+        uriBuilder.deleteCharAt(uriBuilder.length() - 1);
+    }
+    return uriBuilder.toString();
+}
+
+//chinh sua
 private JPanel createEditStaffPanel() {
     JPanel editStaffPanel = new JPanel(new GridBagLayout());
     editStaffPanel.setBorder(BorderFactory.createTitledBorder("Sửa thông tin nhân viên"));
@@ -257,6 +295,7 @@ private JPanel createEditStaffPanel() {
     JTextField nameField = new JTextField();
     JTextField positionField = new JTextField();
     JTextField emailField = new JTextField();
+    JTextField phoneField = new JTextField();
 
     gbc.gridx = 0; gbc.gridy = 0;
     editStaffPanel.add(new JLabel("Tên nhân viên:"), gbc);
@@ -273,6 +312,11 @@ private JPanel createEditStaffPanel() {
     gbc.gridx = 1;
     editStaffPanel.add(emailField, gbc);
 
+    gbc.gridx = 0; gbc.gridy = 3;
+    editStaffPanel.add(new JLabel("Phone:"), gbc);
+    gbc.gridx = 1;
+    editStaffPanel.add(phoneField, gbc);
+
     JButton searchButton = new JButton("Tìm nhân viên");
     searchButton.addActionListener(e -> {
         String name = nameField.getText().trim();
@@ -285,7 +329,7 @@ private JPanel createEditStaffPanel() {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8081/api/staff/search?name=" + URLEncoder.encode(name, "UTF-8"))) // Địa chỉ API tìm kiếm
+                .uri(URI.create("http://localhost:8081/api/library-staff/search?name=" + URLEncoder.encode(name, "UTF-8"))) // Địa chỉ API tìm kiếm
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
@@ -309,7 +353,7 @@ private JPanel createEditStaffPanel() {
         }
     });
 
-    gbc.gridx = 1; gbc.gridy = 3;
+    gbc.gridx = 1; gbc.gridy = 4;
     editStaffPanel.add(searchButton, gbc);
 
     JButton editStaffButton = new JButton("Sửa");
@@ -351,11 +395,12 @@ private JPanel createEditStaffPanel() {
 
     editStaffButton.setBackground(new Color(0, 155, 155));
     editStaffButton.setForeground(Color.WHITE);
-    gbc.gridx = 1; gbc.gridy = 4;
+    gbc.gridx = 1; gbc.gridy = 5;
     editStaffPanel.add(editStaffButton, gbc);
 
     return editStaffPanel;
 }
+
 
     //xoa nhan vien
     private JPanel createDeleteStaffPanel() {

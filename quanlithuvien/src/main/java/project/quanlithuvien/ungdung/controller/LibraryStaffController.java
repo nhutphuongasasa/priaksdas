@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import project.quanlithuvien.ungdung.DTO.LibraryStaffDTO;
@@ -39,7 +40,22 @@ public class LibraryStaffController {
     }
 
     @GetMapping
-    public List<LibraryStaffDTO> findAllLibraryStaff(@RequestBody LibraryStaffRequestDTO libraryStaffRequestDTO) {
+    public List<LibraryStaffDTO> findAllLibraryStaff(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String email,
+        @RequestParam(required = false) String phone,
+        @RequestParam(required = false) String position,
+        @RequestParam(required = false) String user_name,
+        @RequestParam(required = false) String password) {
+
+        LibraryStaffRequestDTO libraryStaffRequestDTO = new LibraryStaffRequestDTO();
+        libraryStaffRequestDTO.setName(name);
+        libraryStaffRequestDTO.setEmail(email);
+        libraryStaffRequestDTO.setPhone(phone);
+        libraryStaffRequestDTO.setPosition(position);
+        libraryStaffRequestDTO.setUser_name(user_name);
+        libraryStaffRequestDTO.setPassword(password);
+
         return libraryStaffService.findAllLibraryStaff(libraryStaffRequestDTO);
     }
 }

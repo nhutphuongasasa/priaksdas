@@ -11,12 +11,9 @@ import java.awt.Insets;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.net.URLEncoder;
 
 import javax.swing.BorderFactory;
@@ -28,7 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
@@ -36,7 +32,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import project.quanlithuvien.ungdung.DTO.*;
-import project.quanlithuvien.ungdung.Models.UserModel;
+
 public class UserShow extends JFrame{
     private JTable table;
     private DefaultTableModel tableModel;
@@ -117,13 +113,11 @@ public class UserShow extends JFrame{
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
     
-        // Các trường nhập liệu
         JTextField nameField = new JTextField();
         JTextField emailField = new JTextField();
         JTextField phoneField = new JTextField();
         JTextField addressField = new JTextField();
     
-        // Nhãn cho các trường nhập liệu
         gbc.gridx = 0; gbc.gridy = 0;
         editUserPanel.add(new JLabel("Tên:"), gbc);
         gbc.gridx = 1;
@@ -144,25 +138,22 @@ public class UserShow extends JFrame{
         gbc.gridx = 1;
         editUserPanel.add(addressField, gbc);
     
-        // Nút tìm kiếm người dùng
         JButton searchButton = new JButton("Tìm kiếm");
         gbc.gridx = 0; gbc.gridy = 4;
         gbc.gridwidth = 2;
         editUserPanel.add(searchButton, gbc);
-        
-        // Nút chỉnh sửa thông tin người dùng
+    
         JButton editUserButton = new JButton("Chỉnh sửa");
         editUserButton.setBackground(new Color(0, 155, 155));
         editUserButton.setForeground(Color.WHITE);
-        gbc.gridwidth = 1;
         gbc.gridx = 0; gbc.gridy = 5;
         editUserPanel.add(editUserButton, gbc);
     
-        // Thêm ActionListener cho nút tìm kiếm
+        // Sự kiện cho nút tìm kiếm
         searchButton.addActionListener(e -> {
-            String nameInput = nameField.getText().trim();
-            if (nameInput.isEmpty()) {
-                JOptionPane.showMessageDialog(editUserPanel, "Vui lòng nhập tên người dùng.");
+            String emailInput = emailField.getText().trim();
+            if (emailInput.isEmpty()) {
+                JOptionPane.showMessageDialog(editUserPanel, "Vui lòng nhập email.");
                 return;
             }
     
@@ -170,7 +161,7 @@ public class UserShow extends JFrame{
             try {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/api/readers/search?name=" + URLEncoder.encode(nameInput, "UTF-8")))
+                    .uri(URI.create("http://localhost:8081/api/readers/" + URLEncoder.encode(emailInput, "UTF-8")))
                     .header("Content-Type", "application/json")
                     .GET()
                     .build();
@@ -178,30 +169,23 @@ public class UserShow extends JFrame{
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     
                 if (response.statusCode() == 200) {
-                    // Chuyển đổi phản hồi JSON thành danh sách ReaderRequestDTO
+                    // Chuyển đổi phản hồi JSON thành ReaderRequestDTO
                     ObjectMapper objectMapper = new ObjectMapper();
-                    List<ReaderRequestDTO> readers = objectMapper.readValue(response.body(),
-                            new TypeReference<List<ReaderRequestDTO>>() {});
+                    ReaderRequestDTO reader = objectMapper.readValue(response.body(), ReaderRequestDTO.class);
     
-                    if (readers.isEmpty()) {
-                        JOptionPane.showMessageDialog(editUserPanel, "Không tìm thấy người dùng với tên: " + nameInput);
-                    } else {
-                        // Giả sử chỉ có một người dùng trùng tên, nếu có nhiều hơn cần xử lý
-                        ReaderRequestDTO reader = readers.get(0);
-                        // Điền thông tin vào các trường
-                        emailField.setText(reader.getEmail());
-                        phoneField.setText(reader.getPhone());
-                        addressField.setText(reader.getAddress());
-                    }
+                    // Điền thông tin vào các trường
+                    nameField.setText(reader.getName());
+                    emailField.setText(reader.getEmail());
+                    phoneField.setText(reader.getPhone());
+                    addressField.setText(reader.getAddress());
                 } else {
-                    JOptionPane.showMessageDialog(editUserPanel, "Lỗi khi tìm kiếm: " + response.body());
+                    JOptionPane.showMessageDialog(editUserPanel, "Không tìm thấy email: " + emailInput);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(editUserPanel, "Có lỗi xảy ra: " + ex.getMessage());
             }
         });
-    
         // Thêm ActionListener cho nút chỉnh sửa
         editUserButton.addActionListener(e -> {
             String name = nameField.getText().trim();
@@ -330,7 +314,12 @@ public class UserShow extends JFrame{
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     
                 if (response.statusCode() == 200) {
-                    tableModel.addRow(new Object[]{name, email, phone, address});
+                    tableModel.addRow(new Object[]{
+                        readerRequestDTO.getName(),
+                        readerRequestDTO.getEmail(),
+                        readerRequestDTO.getPhone(),
+                        readerRequestDTO.getAddress()
+                    });
                     nameField.setText("");
                     emailField.setText("");
                     phoneField.setText("");
@@ -399,21 +388,35 @@ public class UserShow extends JFrame{
         searchPanel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm độc giả"));
     
         JTextField searchField = new JTextField();
-        JTextArea searchResultArea = new JTextArea();
-        searchResultArea.setEditable(false);
         JButton searchButton = new JButton("Tìm kiếm");
         searchButton.setBackground(new Color(0, 155, 155));
         searchButton.setForeground(Color.WHITE);
     
-        searchButton.addActionListener(e -> {
-            String searchText = searchField.getText().toLowerCase();
-            searchResultArea.setText("");
+        // Tạo model cho JTable
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.addColumn("Tên");
+        tableModel.addColumn("Email");
+        tableModel.addColumn("Điện thoại");
+        tableModel.addColumn("Địa chỉ");
     
-            // Gửi yêu cầu HTTP GET để tìm kiếm độc giả theo tên
+        JTable searchTable = new JTable(tableModel);
+        searchTable.setFillsViewportHeight(true);
+        
+        searchButton.addActionListener(e -> {
+            String emailInput = searchField.getText().trim().toLowerCase();
+            tableModel.setRowCount(0); // Xóa tất cả các hàng trong bảng
+    
+            // Kiểm tra nếu email đã nhập là rỗng
+            if (emailInput.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập email để tìm kiếm.");
+                return;
+            }
+    
+            // Gửi yêu cầu HTTP GET để tìm kiếm độc giả theo email
             try {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/api/readers/search?name=" + URLEncoder.encode(searchText, "UTF-8"))) // Địa chỉ API tìm kiếm
+                    .uri(URI.create("http://localhost:8081/api/readers/" + URLEncoder.encode(emailInput, "UTF-8"))) // Địa chỉ API tìm kiếm theo email
                     .header("Content-Type", "application/json")
                     .GET()
                     .build();
@@ -423,15 +426,18 @@ public class UserShow extends JFrame{
                 // Xử lý phản hồi
                 if (response.statusCode() == 200) {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    List<ReaderRequestDTO> readers = objectMapper.readValue(response.body(), new TypeReference<List<ReaderRequestDTO>>() {});
+                    ReaderRequestDTO reader = objectMapper.readValue(response.body(), ReaderRequestDTO.class); // Chuyển đổi phản hồi JSON thành đối tượng ReaderRequestDTO
     
-                    if (readers.isEmpty()) {
-                        searchResultArea.setText("Không tìm thấy độc giả nào.");
+                    if (reader == null) {
+                        JOptionPane.showMessageDialog(this, "Không tìm thấy độc giả nào với email: " + emailInput);
                     } else {
-                        // In ra danh sách độc giả tìm được
-                        for (ReaderRequestDTO reader : readers) {
-                            searchResultArea.append(reader.toString() + "\n");
-                        }
+                        // Thêm thông tin độc giả vào bảng
+                        tableModel.addRow(new Object[]{
+                            reader.getName(),
+                            reader.getEmail(),
+                            reader.getPhone(),
+                            reader.getAddress()
+                        });
                     }
                 } else {
                     JOptionPane.showMessageDialog(this, "Tìm kiếm không thành công: " + response.body());
@@ -443,17 +449,16 @@ public class UserShow extends JFrame{
         });
     
         JPanel searchInputPanel = new JPanel(new BorderLayout());
-        searchInputPanel.add(new JLabel("Nhập từ khóa tìm kiếm:"), BorderLayout.WEST);
+        searchInputPanel.add(new JLabel("Nhập email để tìm kiếm:"), BorderLayout.WEST);
         searchInputPanel.add(searchField, BorderLayout.CENTER);
         searchInputPanel.add(searchButton, BorderLayout.EAST);
     
         searchPanel.add(searchInputPanel, BorderLayout.NORTH);
-        searchPanel.add(new JScrollPane(searchResultArea), BorderLayout.CENTER);
+        searchPanel.add(new JScrollPane(searchTable), BorderLayout.CENTER); // Đưa JTable vào JScrollPane để có thể cuộn
     
         return searchPanel;
     }
-    
-
+    //xoa
     private JPanel createDeleteUserPanel() {
         JPanel deleteUserPanel = new JPanel(new GridBagLayout());
         deleteUserPanel.setBorder(BorderFactory.createTitledBorder("Xóa độc giả"));

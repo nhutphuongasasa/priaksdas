@@ -2,6 +2,8 @@ package project.quanlithuvien.ungdung.Model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +34,7 @@ public class LibraryStaffEntity implements Comparable<LibraryStaffEntity>{
     private String position; 
 
     @Column(name = "hire_date", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate hireDate=LocalDate.now(); 
 
     @Column(name="status",nullable=false)

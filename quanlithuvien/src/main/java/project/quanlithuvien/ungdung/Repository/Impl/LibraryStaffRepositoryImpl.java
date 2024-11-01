@@ -98,11 +98,13 @@ public class LibraryStaffRepositoryImpl implements LibraryStaffRepository {
 				if(!fieldName.equals("hire_date")) {
 					Object value =x.get(staffSearchBuilder);
 					if(value!=null){
-                        ss.append(" and li."+x.getName()+" like '"+value+"' ");
+                        ss.append(" and li."+x.getName()+" like '%"+value+"%' ");
                     }
 				}
 			}
-        ss.append(" and li.hire_date = '"+staffSearchBuilder.getHire_date()+"' ");
+        if(staffSearchBuilder.getHire_date()!=null){
+            ss.append(" and li.hire_date = '"+staffSearchBuilder.getHire_date()+"' ");
+        }
         } catch(IllegalAccessException | IllegalArgumentException | SecurityException e) {
             e.printStackTrace();
 		}
