@@ -34,7 +34,7 @@ public class BookEntity {
     private String publisher;
 
     @Column(name="publication_year")
-    private Long publication_year;
+    private Integer publication_year;
 
     @Column(name="isbn",unique = true, nullable = false)
     private String isbn;
@@ -67,7 +67,7 @@ public class BookEntity {
         this.publisher = publisher;
     }
 
-    public void setPublication_year(Long publication_year) {
+    public void setPublication_year(Integer publication_year) {
         this.publication_year = publication_year;
     }
 
@@ -107,7 +107,7 @@ public class BookEntity {
         return publisher;
     }
 
-    public Long getPublication_year() {
+    public Integer getPublication_year() {
         return publication_year;
     }
 

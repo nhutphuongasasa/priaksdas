@@ -30,9 +30,8 @@ public class ReaderServiceImpl implements  ReaderService{
     
     
     @Override
-    public String deleteReader(ReaderRequestDTO readerRequestDTO) {
-        ReaderEntity readerEntity = readerEntityConverter.toReaderEntity(readerRequestDTO);
-        String result = readerRepository.deleteReader(readerEntity);
+    public String deleteReader(String emailToDelete) {
+        String result = readerRepository.deleteReader(emailToDelete);
         return result;
     }
 

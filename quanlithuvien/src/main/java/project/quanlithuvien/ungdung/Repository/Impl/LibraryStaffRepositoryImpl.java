@@ -56,8 +56,8 @@ public class LibraryStaffRepositoryImpl implements LibraryStaffRepository {
     }
 
     @Override
-    public String deleteLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO) {//buoc nguoi dung nhap email va phone do email va phone unique
-        LibraryStaffEntity libraryStaffEntity = libraryStaffEntityFind.findLibraryStaffEntityByEmail(libraryStaffRequestDTO.getEmail());
+    public String deleteLibraryStaff(String emailTodelete) {//buoc nguoi dung nhap email va phone do email va phone unique
+        LibraryStaffEntity libraryStaffEntity = libraryStaffEntityFind.findLibraryStaffEntityByEmail(emailTodelete);
         if(libraryStaffEntity==null){
             return "Staff does not exists";
         }

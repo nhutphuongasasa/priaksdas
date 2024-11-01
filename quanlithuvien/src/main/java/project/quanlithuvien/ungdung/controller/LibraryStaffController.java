@@ -29,9 +29,9 @@ public class LibraryStaffController {
         return libraryStaffService.addLibraryStaff(libraryStaffRequestDTO);
     }
 
-    @DeleteMapping
-    public String deleteLibraryStaff(@RequestBody LibraryStaffRequestDTO libraryStaffRequestDTO) {
-        return libraryStaffService.deleteLibraryStaff(libraryStaffRequestDTO);
+    @DeleteMapping("/{emailToDelete}")
+    public String deleteLibraryStaff(@PathVariable String emailTodelete) {
+        return libraryStaffService.deleteLibraryStaff(emailTodelete);
     }
 
     @PutMapping("/{emailToUpdate}")

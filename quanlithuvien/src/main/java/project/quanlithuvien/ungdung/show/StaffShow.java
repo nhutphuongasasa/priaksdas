@@ -102,7 +102,7 @@ public class StaffShow extends JFrame {
         this.add(splitPane, BorderLayout.CENTER);
         this.setVisible(true);
     }
-    //them
+    //them(xong)
     private JPanel createAddStaffPanel() {
     JPanel addStaffPanel = new JPanel(new GridBagLayout());
     addStaffPanel.setBorder(BorderFactory.createTitledBorder("Thêm nhân viên mới"));
@@ -163,7 +163,7 @@ public class StaffShow extends JFrame {
         libraryStaffRequestDTO.setUser_name(userNameField.getText().trim());
         libraryStaffRequestDTO.setPassword(new String(passwordField.getPassword().toString()).trim());
 
-        // Gửi yêu cầu thêm nhân viên
+        // Gửi yêu cầu thêm nhân viên(xong)
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonRequest = objectMapper.writeValueAsString(libraryStaffRequestDTO);
@@ -199,7 +199,7 @@ public class StaffShow extends JFrame {
     gbc.gridx = 1; gbc.gridy = 6;
     addStaffPanel.add(addStaffButton, gbc);
 
-    // Nút xem danh sách nhân viên
+    // Nút xem danh sách nhân viên(xong)
     JButton viewStaffButton = new JButton("Xem danh sách nhân viên");
     viewStaffButton.addActionListener(e -> {
         // Gửi yêu cầu lấy toan bo danh sách nhân viên
@@ -253,8 +253,8 @@ public class StaffShow extends JFrame {
 }
 
 
-//in danh sach nhan vien
-public String sendDtaffSearchRequest(String name,String email,String phone,String position,String password,String user_name){
+    //nhan url danh sach nhan vien(xong)
+    public String sendDtaffSearchRequest(String name,String email,String phone,String position,String password,String user_name){
     StringBuilder uriBuilder = new StringBuilder("http://localhost:8081/api/library-staff?");
     if(name==null&&email==null&&phone==null&&position==null&&password==null&&user_name==null){
         uriBuilder.append("name=&email=&phone=&position=&user_name=&password=");
@@ -283,8 +283,8 @@ public String sendDtaffSearchRequest(String name,String email,String phone,Strin
     return uriBuilder.toString();
 }
 
-//chinh sua
-private JPanel createEditStaffPanel() {
+    //chinh sua them text field tim nhan vien theo email
+    private JPanel createEditStaffPanel() {
     JPanel editStaffPanel = new JPanel(new GridBagLayout());
     editStaffPanel.setBorder(BorderFactory.createTitledBorder("Sửa thông tin nhân viên"));
 
@@ -325,7 +325,7 @@ private JPanel createEditStaffPanel() {
             return;
         }
         
-        // Tìm nhân viên theo tên
+        // Tìm nhân viên theo email
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -402,7 +402,7 @@ private JPanel createEditStaffPanel() {
 }
 
 
-    //xoa nhan vien
+    //xoa nhan vien doi lat xoa nhan vien theo email
     private JPanel createDeleteStaffPanel() {
         JPanel deleteStaffPanel = new JPanel(new GridBagLayout());
         deleteStaffPanel.setBorder(BorderFactory.createTitledBorder("Xóa nhân viên"));
@@ -435,7 +435,7 @@ private JPanel createEditStaffPanel() {
             try {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://localhost:8081/api/staff/delete?name=" + URLEncoder.encode(nameInput, "UTF-8")))
+                        .uri(URI.create("http://localhost:8081/api/library-staff" + nameField.getText().trim()))
                         .header("Content-Type", "application/json")
                         .DELETE() // Sử dụng phương thức DELETE
                         .build();
@@ -443,9 +443,13 @@ private JPanel createEditStaffPanel() {
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     
                 if (response.statusCode() == 200) {
-                    JOptionPane.showMessageDialog(deleteStaffPanel, "Đã xóa nhân viên: " + nameInput);
-                } else {
-                    JOptionPane.showMessageDialog(deleteStaffPanel, "Không tìm thấy nhân viên với tên: " + nameInput);
+                    String responseFromSever = response.body();
+                    if(responseFromSever.equals("Successfull")){
+                        JOptionPane.showMessageDialog(deleteStaffPanel, "Successfull");
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(deleteStaffPanel, responseFromSever);
+                    }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

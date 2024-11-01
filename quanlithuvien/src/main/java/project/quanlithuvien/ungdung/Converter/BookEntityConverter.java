@@ -21,7 +21,7 @@ public class BookEntityConverter {
             bookEntityCopy.setIsbn(bookRequestDTO.getIsbn());
         }
         if (bookRequestDTO.getPublication_year() != null) {
-            bookEntityCopy.setPublication_year(bookRequestDTO.getPublication_year());
+            bookEntityCopy.setPublication_year(bookRequestDTO.getPublication_year());;
         }
         if (bookRequestDTO.getQuantity() != null) {
             bookEntityCopy.setQuantity(bookRequestDTO.getQuantity());

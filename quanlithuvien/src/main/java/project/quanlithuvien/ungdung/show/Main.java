@@ -2,8 +2,7 @@ package project.quanlithuvien.ungdung.show;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class Main extends JFrame {
     public Main() {
@@ -36,21 +35,12 @@ public class Main extends JFrame {
         JPasswordField passwordField = new JPasswordField(15);
 
         JButton loginButton = new JButton("Đăng nhập");
-        JButton exiButton = new JButton("Thoát");
-        exiButton.setBackground(Color.RED);
-        exiButton.setForeground(Color.WHITE);
-        exiButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-                System.exit(0);
-            }
-        });
-        loginButton.addActionListener(new ActionListener() {   
-            @Override
-            public void actionPerformed(ActionEvent e){
-                new LibraryManagementUI();
-            }
-        });
+        JButton exitButton = new JButton("Thoát");
+        exitButton.setBackground(Color.RED);
+        exitButton.setForeground(Color.WHITE);
+        exitButton.addActionListener(e -> System.exit(0));
+
+        loginButton.addActionListener(e -> switchToLibraryManagementUI());
 
         styleButton(loginButton);
 
@@ -76,7 +66,8 @@ public class Main extends JFrame {
         gbc.gridx = 0;
         loginPanel.add(loginButton, gbc);
         gbc.gridx = 1;
-        loginPanel.add(exiButton, gbc);
+        loginPanel.add(exitButton, gbc);
+
         return loginPanel;
     }
 
@@ -87,9 +78,25 @@ public class Main extends JFrame {
         button.setForeground(Color.WHITE);
     }
 
+    private void switchToLibraryManagementUI() {
+        this.setVisible(false); // Ẩn `Main`
+        
+        LibraryManagementUI libraryManagementUI = new LibraryManagementUI();
+        libraryManagementUI.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Main.this.setVisible(true); // Hiển thị lại `Main` khi đóng `LibraryManagementUI`
+            }
+        });
+
+        libraryManagementUI.setVisible(true); // Hiển thị `LibraryManagementUI`
+    }
+
     // public static void main(String[] args) {
-    //     Main main = new Main();
-    //     main.setVisible(true);
-    //     System.out.println("Chạy chương trình thành công");
+    //     SwingUtilities.invokeLater(() -> {
+    //         Main main = new Main();
+    //         main.setVisible(true);
+    //         System.out.println("Chạy chương trình thành công");
+    //     });
     // }
 }

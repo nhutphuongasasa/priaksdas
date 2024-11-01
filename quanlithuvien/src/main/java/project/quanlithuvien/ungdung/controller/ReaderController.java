@@ -36,9 +36,9 @@ public class ReaderController {
         return response;
     }
 
-    @DeleteMapping
-    public String deleteReader(@RequestBody ReaderRequestDTO readerRequestDTO) {
-        String response = readerService.deleteReader(readerRequestDTO);
+    @DeleteMapping("/{emailToDelete}")
+    public String deleteReader(@PathVariable String emailToDelete) {
+        String response = readerService.deleteReader(emailToDelete);
         return response;
     }
 

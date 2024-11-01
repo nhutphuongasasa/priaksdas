@@ -43,7 +43,7 @@ public class CategoryShow extends JFrame {
         mainPanel = new JPanel(cardLayout);
 
         // Bảng hiển thị danh mục sách
-        tableModel = new DefaultTableModel(new Object[]{"Category ID", "Category Name"}, 0);
+        tableModel = new DefaultTableModel(new Object[]{ "Category Name"}, 0);
         JTable table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));

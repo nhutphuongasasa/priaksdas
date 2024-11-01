@@ -47,8 +47,8 @@ public class ReaderRepositoryImpl implements  ReaderRepository{
     }
 
     @Override
-    public String deleteReader(ReaderEntity readerEntity) {//yeu cau nguoi dung phai nhap du nhat thiet phai co email
-        ReaderEntity readerEntityCopy = readerEnriryFind.readerEntityFindByEmail(readerEntity.getEmail());
+    public String deleteReader(String emailToDelete) {//yeu cau nguoi dung phai nhap du nhat thiet phai co email
+        ReaderEntity readerEntityCopy = readerEnriryFind.readerEntityFindByEmail(emailToDelete);
         if(readerEntityCopy==null){
             return "user does not exist";
         }

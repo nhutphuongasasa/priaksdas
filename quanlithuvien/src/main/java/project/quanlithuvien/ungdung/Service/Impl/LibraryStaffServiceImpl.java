@@ -51,8 +51,8 @@ public class LibraryStaffServiceImpl implements LibraryStaffService{
     
 
     @Override
-    public String deleteLibraryStaff(LibraryStaffRequestDTO libraryStaffRequestDTO) {
-        String result = labraryStaffRepository.deleteLibraryStaff(libraryStaffRequestDTO);
+    public String deleteLibraryStaff(String emailTodelete) {
+        String result = labraryStaffRepository.deleteLibraryStaff(emailTodelete);
         return  result;
     }
 

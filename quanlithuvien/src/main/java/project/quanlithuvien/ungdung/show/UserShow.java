@@ -28,6 +28,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
+import org.springframework.http.ResponseEntity;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -53,7 +56,7 @@ public class UserShow extends JFrame{
         mainPanel = new JPanel(cardLayout);
 
         // Bảng hiển thị độc giả
-        tableModel = new DefaultTableModel(new Object[]{"Name", "Age", "Email"}, 0);
+        tableModel = new DefaultTableModel(new Object[]{"Name", "Email","Phone", "Address", "Registration_Date","Status"}, 0);
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -239,7 +242,7 @@ public class UserShow extends JFrame{
         return editUserPanel;
     }
     
-    //them user
+    //them user(test)
     private JPanel createAddUserPanel() {
         JPanel addUserPanel = new JPanel(new GridBagLayout());
         addUserPanel.setBorder(BorderFactory.createTitledBorder("Thêm độc giả mới"));
@@ -303,7 +306,7 @@ public class UserShow extends JFrame{
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 String jsonRequest = objectMapper.writeValueAsString(readerRequestDTO);
-    
+                
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create("http://localhost:8081/api/readers"))
@@ -314,19 +317,24 @@ public class UserShow extends JFrame{
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     
                 if (response.statusCode() == 200) {
-                    tableModel.addRow(new Object[]{
-                        readerRequestDTO.getName(),
-                        readerRequestDTO.getEmail(),
-                        readerRequestDTO.getPhone(),
-                        readerRequestDTO.getAddress()
-                    });
+
+                    String responseFromSever = response.body();
+                    if(responseFromSever.equals("Successfull")){
+                        tableModel.addRow(new Object[]{
+                            readerRequestDTO.getName(),
+                            readerRequestDTO.getEmail(),
+                            readerRequestDTO.getPhone(),
+                            readerRequestDTO.getAddress()
+                        });
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(this,responseFromSever, "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                    }
                     nameField.setText("");
                     emailField.setText("");
                     phoneField.setText("");
                     addressField.setText("");
-                } else {
-                    JOptionPane.showMessageDialog(this, "Thêm độc giả không thành công: " + response.body());
-                }
+                } 
             } catch (Exception ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Có lỗi xảy ra: " + ex.getMessage());
@@ -382,7 +390,7 @@ public class UserShow extends JFrame{
         return addUserPanel;
     }
     
-
+    //tim kiem sua lai model o ten email dien thoai  
     private JPanel createSearchPanel() {
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm độc giả"));
@@ -458,7 +466,7 @@ public class UserShow extends JFrame{
     
         return searchPanel;
     }
-    //xoa
+    //xoa sua lai thayo xoa them name bang xoa theo email
     private JPanel createDeleteUserPanel() {
         JPanel deleteUserPanel = new JPanel(new GridBagLayout());
         deleteUserPanel.setBorder(BorderFactory.createTitledBorder("Xóa độc giả"));
@@ -491,7 +499,7 @@ public class UserShow extends JFrame{
                 // Gửi yêu cầu HTTP GET để tìm kiếm độc giả theo tên
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/api/readers/search?name=" + URLEncoder.encode(nameInput, "UTF-8"))) // Địa chỉ API tìm kiếm
+                    .uri(URI.create("http://localhost:8081/api/readers/" +deleteField.getText().trim())) 
                     .header("Content-Type", "application/json")
                     .GET()
                     .build();
@@ -499,30 +507,14 @@ public class UserShow extends JFrame{
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     
                 if (response.statusCode() == 200) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    List<ReaderRequestDTO> readers = objectMapper.readValue(response.body(), new TypeReference<List<ReaderRequestDTO>>() {});
-    
-                    if (readers.isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "Không tìm thấy độc giả với tên: " + nameInput);
-                    } else if (readers.size() == 1) {
-                        // Nếu chỉ có một độc giả, thực hiện xóa ngay
-                        confirmAndDeleteUser(readers.get(0));
-                    } else {
-                        // Nếu có nhiều độc giả, yêu cầu nhập địa chỉ
-                        String addressInput = JOptionPane.showInputDialog(this, "Có nhiều độc giả trùng tên. Vui lòng nhập địa chỉ để xác định độc giả cần xóa:");
-                        if (addressInput != null && !addressInput.trim().isEmpty()) {
-                            for (ReaderRequestDTO reader : readers) {
-                                if (reader.getAddress().equalsIgnoreCase(addressInput.trim())) {
-                                    confirmAndDeleteUser(reader);
-                                    return; // Thoát sau khi tìm thấy và xóa
-                                }
-                            }
-                            JOptionPane.showMessageDialog(this, "Không tìm thấy độc giả với địa chỉ: " + addressInput);
-                        }
+                    String responseFromSever = response.body();
+                    if(responseFromSever.equals("Successfull")){
+                        tableModel.setRowCount(0);
                     }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm độc giả: " + response.body());
-                }
+                    else{
+                        JOptionPane.showMessageDialog(this,responseFromSever, "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                    }   
+                } 
             } catch (Exception ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Có lỗi xảy ra: " + ex.getMessage());

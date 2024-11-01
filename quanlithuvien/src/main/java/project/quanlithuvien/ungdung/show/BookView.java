@@ -187,7 +187,7 @@ public class BookView extends JFrame {
             bookRequestDTO.setTitle(titleField.getText());
             bookRequestDTO.setAuthor(authorField.getText());
             bookRequestDTO.setPublisher(publisherField.getText());
-            bookRequestDTO.setPublication_year(Long.parseLong(publicationYearField.getText()));
+            bookRequestDTO.setPublication_year(Integer.parseInt(publicationYearField.getText()));
             bookRequestDTO.setIsbn(isbnField.getText());
             bookRequestDTO.setCategory(List.of(categoryField.getText().split("/+")));
             bookRequestDTO.setQuantity(Integer.parseInt(quantityField.getText()));
@@ -206,18 +206,22 @@ public class BookView extends JFrame {
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
                 if (response.statusCode() == 200) {
-                    System.out.println("Search success");
-                    tableModel.addRow(new Object[]{
-                        bookRequestDTO.getTitle(),
-                        bookRequestDTO.getAuthor(),
-                        bookRequestDTO.getPublisher(),
-                        bookRequestDTO.getPublication_year(),
-                        bookRequestDTO.getIsbn(),
-                        bookRequestDTO.getCategory(),
-                        bookRequestDTO.getQuantity(),
-                        bookRequestDTO.getAvailable_quantity()
-                    });
-
+                    String responseFromSever =response.body();
+                    if(responseFromSever.equals("Successfull")){
+                        tableModel.addRow(new Object[]{
+                            bookRequestDTO.getTitle(),
+                            bookRequestDTO.getAuthor(),
+                            bookRequestDTO.getPublisher(),
+                            bookRequestDTO.getPublication_year(),
+                            bookRequestDTO.getIsbn(),
+                            bookRequestDTO.getCategory(),
+                            bookRequestDTO.getQuantity(),
+                            bookRequestDTO.getAvailable_quantity()
+                        });
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(addBookPanel,responseFromSever, "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                    }
                     titleField.setText("");
                     authorField.setText("");
                     publisherField.setText("");
@@ -226,6 +230,7 @@ public class BookView extends JFrame {
                     categoryField.setText("");
                     quantityField.setText("");
                     availableQuantityField.setText("");
+                    
                 } else {
                     System.out.println("Failed to add book: " + response.body());
                 }
@@ -242,7 +247,7 @@ public class BookView extends JFrame {
         return addBookPanel;
     }
     //ham gui yeu cau in toan bo sach (xong)
-    public void sendBookSearchRequest(String title, String author, String publisher, Long publication_year, String isbn, List<String> categories, Integer quantity, Integer available_quantity) {
+    public void sendBookSearchRequest(String title, String author, String publisher, Integer publication_year, String isbn, List<String> categories, Integer quantity, Integer available_quantity) {
     try {
         HttpClient client = HttpClient.newHttpClient();
         // Tạo URI với các tham số
@@ -304,6 +309,7 @@ public class BookView extends JFrame {
                     book.getAvailable_quantity()
                 });
             } 
+            
         } else {
             System.out.println("Failed to retrieve books: " + response.body());
         }
@@ -312,45 +318,55 @@ public class BookView extends JFrame {
     }
 }
 
-
+    //tim kiem(xong)
     private JPanel createSearchPanel() {
 
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm sách"));
     
         JTextField searchField = new JTextField();
+        searchField.setPreferredSize(new Dimension(200, 30));
         JButton searchButton = new JButton("Tìm kiếm sách");
         searchButton.setBackground(new Color(0, 155, 155));
         searchButton.setForeground(Color.WHITE);
     
         // Sự kiện tìm kiếm
-        searchButton.addActionListener(e -> {
-            String isbn = searchField.getText().trim();
-            if (!isbn.isEmpty()) {
-                searchBookByISBN(isbn);
-            } else {
-                JOptionPane.showMessageDialog(searchPanel, "Vui lòng nhập ISBN để tìm kiếm!");
-            }
-        });
+        // searchButton.addActionListener(e -> {
+        //     String isbn = searchField.getText().trim();
+        //     if (!isbn.isEmpty()) {
+        //         searchBookByISBN(isbn);
+        //     } else {
+        //         JOptionPane.showMessageDialog(searchPanel, "Vui lòng nhập ISBN để tìm kiếm!");
+        //     }
+        // });
     
         JPanel searchInputPanel = new JPanel(new BorderLayout());
-    
+        searchInputPanel.add(searchField);
+        searchInputPanel.add(searchButton);
         // Các trường thông tin sách
         JTextField isbnField = new JTextField();
+        isbnField.setPreferredSize(new Dimension(200, 30));
         JTextField titleField = new JTextField();
+        titleField.setPreferredSize(new Dimension(200, 30));
         JTextField authorField = new JTextField();
+        authorField.setPreferredSize(new Dimension(200, 30));
         JTextField publisherField = new JTextField();
+        publisherField.setPreferredSize(new Dimension(200, 30));
         JTextField publicationYearField = new JTextField();
+        publicationYearField.setPreferredSize(new Dimension(200, 30));
         JTextField categoryField = new JTextField();
+        categoryField.setPreferredSize(new Dimension(200, 30));
         JTextField quantityField = new JTextField();
+        quantityField.setPreferredSize(new Dimension(200, 30));
         JTextField availableQuantityField = new JTextField();
+        availableQuantityField.setPreferredSize(new Dimension(200, 30));
     
         // Panel chứa các trường thông tin sách
         JPanel bookInfoPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-    
+        gbc.weightx = 1.0;
         // ISBN Field
         gbc.gridx = 0; gbc.gridy = 0;
         bookInfoPanel.add(new JLabel("ISBN:"), gbc);
@@ -391,10 +407,22 @@ public class BookView extends JFrame {
         bookInfoPanel.add(new JLabel("Available Quantity:"), gbc);
         gbc.gridx = 1;
         bookInfoPanel.add(availableQuantityField, gbc);
-    
         // Thêm các panel vào searchPanel
-        // searchPanel.add(searchInputPanel, BorderLayout.NORTH);
-        // searchPanel.add(bookInfoPanel, BorderLayout.CENTER);
+        searchPanel.add(searchInputPanel, BorderLayout.SOUTH);
+        searchPanel.add(bookInfoPanel, BorderLayout.CENTER);
+
+        searchButton.addActionListener(e -> {
+            sendBookSearchRequest(titleField.getText().trim(), authorField.getText().trim(), publisherField.getText(), null, isbnField.getText().trim(), null, null, null);
+            isbnField.setText("");
+            titleField.setText("");
+            authorField.setText("");
+            publisherField.setText("");
+            publicationYearField.setText("");
+            categoryField.setText("");
+            quantityField.setText("");
+            availableQuantityField.setText("");
+        });
+
         // BookRequestDTO book = new BookRequestDTO();
         // book.setIsbn(isbnField.getText());
         // book.setTitle(titleField.getText());
@@ -409,9 +437,9 @@ public class BookView extends JFrame {
     
     
     // Phương thức tìm kiếm sách qua ISBN và cập nhật bảng(xong)
-    private void searchBookByISBN(String isbn) {
-        sendBookSearchRequest(null, null, null, null, isbn, null, null, null);
-    }
+    // private void searchBookByISBN(String isbn) {
+    //     sendBookSearchRequest(null, null, null, null, isbn, null, null, null);
+    // }
     
     //chinh sua sach(xong)
     private JPanel createEditBookPanel() {
@@ -575,7 +603,7 @@ public class BookView extends JFrame {
             bookRequestDTO.setTitle(titleField.getText());
             bookRequestDTO.setAuthor(authorField.getText());
             bookRequestDTO.setPublisher(publisherField.getText());
-            bookRequestDTO.setPublication_year(Long.parseLong(publicationYearField.getText()));
+            bookRequestDTO.setPublication_year(Integer.parseInt(publicationYearField.getText()));
             bookRequestDTO.setCategory(List.of(categoryField.getText()));
             bookRequestDTO.setQuantity(Integer.parseInt(quantityField.getText()));
             bookRequestDTO.setAvailable_quantity(Integer.parseInt(availableQuantityField.getText()));
@@ -651,10 +679,9 @@ public class BookView extends JFrame {
     
                 // Xử lý phản hồi
                 if (response.statusCode() == 200) {
-                    System.out.println("Sách đã được xóa thành công: " + response.body());
-                } else {
-                    System.out.println("Không thể xóa sách: " + response.body());
-                }
+                    String responseFromSever = response.body();
+                    JOptionPane.showMessageDialog(this,responseFromSever);
+                } 
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
