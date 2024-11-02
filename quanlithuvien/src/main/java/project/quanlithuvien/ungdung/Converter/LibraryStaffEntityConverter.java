@@ -23,8 +23,10 @@ public class LibraryStaffEntityConverter {
     public LibraryStaffEntity toLibraryStaffEntity(LibraryStaffRequestDTO libraryStaffRequestDTO){
         LibraryStaffEntity libraryStaffEntity = modelMapper.map(libraryStaffRequestDTO,LibraryStaffEntity.class);
         libraryStaffEntity.setStatus("active");
-        String encodedPassword = passwordEncoder.encode(libraryStaffRequestDTO.getPassword());
-        libraryStaffEntity.setPassword(encodedPassword);
+        if(libraryStaffRequestDTO.getPassword()!=null&&!libraryStaffRequestDTO.getPassword().trim().equals("")){
+            String encodedPassword = passwordEncoder.encode(libraryStaffRequestDTO.getPassword());
+            libraryStaffEntity.setPassword(encodedPassword);
+        }
         RoleEntity roleEntity = roleService.findByName("staff").get();
         List<LibraryStaffEntity> tmp =roleEntity.getLibrary_staff();
         tmp.add(libraryStaffEntity);

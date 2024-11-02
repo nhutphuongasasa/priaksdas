@@ -35,7 +35,7 @@ public class CategoryShow extends JFrame {
 
     private void init() {
         this.setTitle("Quản lý danh mục sách");
-        this.setSize(800, 600);
+        this.setSize(1200, 600);
         this.setLocationRelativeTo(null);
 
         // Card layout cho các panel

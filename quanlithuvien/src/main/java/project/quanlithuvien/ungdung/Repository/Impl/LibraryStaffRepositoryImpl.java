@@ -84,6 +84,8 @@ public class LibraryStaffRepositoryImpl implements LibraryStaffRepository {
         libraryStaffEntityCopy.setStaff_id(libraryStaffEntity.getStaff_id());
         libraryStaffEntityCopy.setStatus(libraryStaffEntity.getStatus());
         libraryStaffEntityCopy.setHireDate(libraryStaffEntity.getHireDate());
+        libraryStaffEntityCopy.setUser_name(libraryStaffEntity.getUser_name());
+        libraryStaffEntityCopy.setPassword(libraryStaffEntity.getPassword());
         entityManager.merge(libraryStaffEntityCopy);
         return  "Successfull";
     }

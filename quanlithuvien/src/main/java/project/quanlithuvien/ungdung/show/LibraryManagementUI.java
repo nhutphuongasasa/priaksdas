@@ -1,13 +1,22 @@
 package project.quanlithuvien.ungdung.show;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class LibraryManagementUI extends JFrame {
     
     public LibraryManagementUI() {
         setTitle("Quản Lý Thư Viện");
-        setSize(800, 600);
+        setSize(1200, 600);
         setLocationRelativeTo(null);
         
         JPanel mainPanel = new JPanel(new BorderLayout());

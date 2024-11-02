@@ -30,10 +30,10 @@ public class LibraryStaffController {
     }
 
     @DeleteMapping("/{emailToDelete}")
-    public String deleteLibraryStaff(@PathVariable String emailTodelete) {
-        return libraryStaffService.deleteLibraryStaff(emailTodelete);
+    public String deleteLibraryStaff(@PathVariable String emailToDelete){
+        return libraryStaffService.deleteLibraryStaff(emailToDelete);
     }
-
+    
     @PutMapping("/{emailToUpdate}")
     public String updateLibraryStaff(@RequestBody LibraryStaffRequestDTO libraryStaffRequestDTO,@PathVariable String emailToUpdate) {
         return libraryStaffService.updateLibraryStaff(libraryStaffRequestDTO,emailToUpdate);

@@ -1,8 +1,19 @@
 package project.quanlithuvien.ungdung.show;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 public class Main extends JFrame {
     public Main() {
@@ -11,7 +22,7 @@ public class Main extends JFrame {
 
     private void initUI() {
         setTitle("Chương trình quản lý thư viện");
-        setSize(800, 600);
+        setSize(1200, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 

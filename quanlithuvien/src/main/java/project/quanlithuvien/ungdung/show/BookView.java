@@ -45,7 +45,7 @@ public class BookView extends JFrame {
 
     private void init(){
         this.setTitle("Quản lý sách");
-        this.setSize(800, 600);
+        this.setSize(1200, 600);
         this.setLocationRelativeTo(null);
 
         // Card layout cho các panel
@@ -182,7 +182,27 @@ public class BookView extends JFrame {
         gbc.gridx = 1; gbc.gridy = 9;
         addBookPanel.add(printAllBooksButton, gbc);
 
+
         addBookButton.addActionListener(e -> {
+            String title = titleField.getText().trim();
+            String author = authorField.getText().trim();
+            String publisher = publisherField.getText().trim();
+            String publicationYearText = publicationYearField.getText().trim();
+            String isbn = isbnField.getText().trim();
+            String categoryText = categoryField.getText().trim();
+            String quantityText = quantityField.getText().trim();
+            String availableQuantityText = availableQuantityField.getText().trim();
+
+            // Kiểm tra sự hợp lệ của thông tin nhập vào
+            if (title.isEmpty() || author.isEmpty() || publisher.isEmpty() || 
+                publicationYearText.isEmpty() || isbn.isEmpty() || 
+                categoryText.isEmpty() || quantityText.isEmpty() || 
+                availableQuantityText.isEmpty()) {
+                
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin.");
+                return; // Dừng thực hiện nếu có trường không hợp lệ
+            }
+
             BookRequestDTO bookRequestDTO = new BookRequestDTO();
             bookRequestDTO.setTitle(titleField.getText());
             bookRequestDTO.setAuthor(authorField.getText());
@@ -330,16 +350,6 @@ public class BookView extends JFrame {
         searchButton.setBackground(new Color(0, 155, 155));
         searchButton.setForeground(Color.WHITE);
     
-        // Sự kiện tìm kiếm
-        // searchButton.addActionListener(e -> {
-        //     String isbn = searchField.getText().trim();
-        //     if (!isbn.isEmpty()) {
-        //         searchBookByISBN(isbn);
-        //     } else {
-        //         JOptionPane.showMessageDialog(searchPanel, "Vui lòng nhập ISBN để tìm kiếm!");
-        //     }
-        // });
-    
         JPanel searchInputPanel = new JPanel(new BorderLayout());
         searchInputPanel.add(searchField);
         searchInputPanel.add(searchButton);
@@ -423,23 +433,9 @@ public class BookView extends JFrame {
             availableQuantityField.setText("");
         });
 
-        // BookRequestDTO book = new BookRequestDTO();
-        // book.setIsbn(isbnField.getText());
-        // book.setTitle(titleField.getText());
-        // book.setAuthor(authorField.getText());
-        // book.setPublisher(publisherField.getText());
-        // book.setPublication_year(Long.parseLong(publicationYearField.getText()));
-        // book.setCategory(List.of(categoryField.getText()));
-        // book.setQuantity(Integer.parseInt(quantityField.getText()));
-        // book.setAvailable_quantity(Integer.parseInt(availableQuantityField.getText())); => các thông tin tìm kiếm của nguời dùng sau khi nhập
         return searchPanel;
     }
-    
-    
-    // Phương thức tìm kiếm sách qua ISBN và cập nhật bảng(xong)
-    // private void searchBookByISBN(String isbn) {
-    //     sendBookSearchRequest(null, null, null, null, isbn, null, null, null);
-    // }
+
     
     //chinh sua sach(xong)
     private JPanel createEditBookPanel() {

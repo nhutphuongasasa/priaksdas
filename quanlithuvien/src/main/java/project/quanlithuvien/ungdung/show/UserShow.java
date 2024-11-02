@@ -116,107 +116,122 @@ public class UserShow extends JFrame{
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
     
-        JTextField nameField = new JTextField();
-        JTextField emailField = new JTextField();
-        JTextField phoneField = new JTextField();
-        JTextField addressField = new JTextField();
+        JTextField nameField = new JTextField(80);
+        JTextField emailField = new JTextField(80);
+        JTextField newEmailField = new JTextField(80);
+        JTextField phoneField = new JTextField(80);
+        JTextField addressField = new JTextField(80);
     
         gbc.gridx = 0; gbc.gridy = 0;
-        editUserPanel.add(new JLabel("Tên:"), gbc);
-        gbc.gridx = 1;
-        editUserPanel.add(nameField, gbc);
-    
-        gbc.gridx = 0; gbc.gridy = 1;
         editUserPanel.add(new JLabel("Email:"), gbc);
         gbc.gridx = 1;
         editUserPanel.add(emailField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        editUserPanel.add(new JLabel("New Email:"), gbc);
+        gbc.gridx = 1;
+        editUserPanel.add(emailField, gbc);
+        newEmailField.setEditable(false);
     
         gbc.gridx = 0; gbc.gridy = 2;
-        editUserPanel.add(new JLabel("Điện thoại:"), gbc);
+        editUserPanel.add(new JLabel("Name:"), gbc);
         gbc.gridx = 1;
-        editUserPanel.add(phoneField, gbc);
+        editUserPanel.add(nameField, gbc);
+        nameField.setEditable(false); // Ban đầu không cho chỉnh sửa
     
         gbc.gridx = 0; gbc.gridy = 3;
-        editUserPanel.add(new JLabel("Địa chỉ:"), gbc);
+        editUserPanel.add(new JLabel("Phone:"), gbc);
+        gbc.gridx = 1;
+        editUserPanel.add(phoneField, gbc);
+        phoneField.setEditable(false); // Ban đầu không cho chỉnh sửa
+    
+        gbc.gridx = 0; gbc.gridy = 4;
+        editUserPanel.add(new JLabel("Address:"), gbc);
         gbc.gridx = 1;
         editUserPanel.add(addressField, gbc);
+        addressField.setEditable(false); // Ban đầu không cho chỉnh sửa
     
         JButton searchButton = new JButton("Tìm kiếm");
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0; gbc.gridy = 5;
         gbc.gridwidth = 2;
         editUserPanel.add(searchButton, gbc);
     
         JButton editUserButton = new JButton("Chỉnh sửa");
         editUserButton.setBackground(new Color(0, 155, 155));
         editUserButton.setForeground(Color.WHITE);
-        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridx = 1; gbc.gridy = 6;
         editUserPanel.add(editUserButton, gbc);
+        editUserButton.setEnabled(false); // Ban đầu tắt nút chỉnh sửa
     
         // Sự kiện cho nút tìm kiếm
-        searchButton.addActionListener(e -> {
-            String emailInput = emailField.getText().trim();
-            if (emailInput.isEmpty()) {
-                JOptionPane.showMessageDialog(editUserPanel, "Vui lòng nhập email.");
-                return;
-            }
+        // searchButton.addActionListener(e -> {
+        //     String emailInput = emailField.getText().trim();
+        //     if (emailInput.isEmpty()) {
+        //         JOptionPane.showMessageDialog(editUserPanel, "Vui lòng nhập email.");
+        //         return;
+        //     }
     
-            // Gửi yêu cầu tìm kiếm đến API
-            try {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/api/readers/" + URLEncoder.encode(emailInput, "UTF-8")))
-                    .header("Content-Type", "application/json")
-                    .GET()
-                    .build();
+        //     // Gửi yêu cầu tìm kiếm đến API
+        //     try {
+        //         HttpClient client = HttpClient.newHttpClient();
+        //         HttpRequest request = HttpRequest.newBuilder()
+        //             .uri(URI.create("http://localhost:8081/api/readers/" + URLEncoder.encode(emailInput, "UTF-8")))
+        //             .header("Content-Type", "application/json")
+        //             .GET()
+        //             .build();
     
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        //         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     
-                if (response.statusCode() == 200) {
-                    // Chuyển đổi phản hồi JSON thành ReaderRequestDTO
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    ReaderRequestDTO reader = objectMapper.readValue(response.body(), ReaderRequestDTO.class);
+        //         if (response.statusCode() == 200) {
+        //             ObjectMapper objectMapper = new ObjectMapper();
+        //             ReaderRequestDTO reader = objectMapper.readValue(response.body(), ReaderRequestDTO.class);
     
-                    // Điền thông tin vào các trường
-                    nameField.setText(reader.getName());
-                    emailField.setText(reader.getEmail());
-                    phoneField.setText(reader.getPhone());
-                    addressField.setText(reader.getAddress());
-                } else {
-                    JOptionPane.showMessageDialog(editUserPanel, "Không tìm thấy email: " + emailInput);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(editUserPanel, "Có lỗi xảy ra: " + ex.getMessage());
-            }
-        });
+        //             // Điền thông tin vào các trường
+        //             nameField.setText(reader.getName());
+        //             phoneField.setText(reader.getPhone());
+        //             newEmailField.setText(reader.getEmail());
+        //             addressField.setText(reader.getAddress());
+    
+        //             // Cho phép chỉnh sửa các trường và bật nút chỉnh sửa
+        //             nameField.setEditable(true);
+        //             phoneField.setEditable(true);
+        //             addressField.setEditable(true);
+        //             newEmailField.setEditable(true);
+        //             editUserButton.setEnabled(true);
+        //         } else {
+        //             JOptionPane.showMessageDialog(editUserPanel, "Không tìm thấy email: " + emailInput);
+        //         }
+        //     } catch (Exception ex) {
+        //         ex.printStackTrace();
+        //         JOptionPane.showMessageDialog(editUserPanel, "Có lỗi xảy ra: " + ex.getMessage());
+        //     }
+        // });
+    
         // Thêm ActionListener cho nút chỉnh sửa
         editUserButton.addActionListener(e -> {
             String name = nameField.getText().trim();
-            String email = emailField.getText().trim();
+            String email = newEmailField.getText().trim();
             String phone = phoneField.getText().trim();
             String address = addressField.getText().trim();
     
-            // Kiểm tra các trường nhập liệu
             if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()) {
                 JOptionPane.showMessageDialog(editUserPanel, "Vui lòng điền đầy đủ thông tin.");
                 return;
             }
     
-            // Tạo đối tượng ReaderRequestDTO để cập nhật
             ReaderRequestDTO readerRequestDTO = new ReaderRequestDTO();
             readerRequestDTO.setName(name);
             readerRequestDTO.setEmail(email);
             readerRequestDTO.setPhone(phone);
             readerRequestDTO.setAddress(address);
     
-            // Gửi yêu cầu PUT để cập nhật thông tin người dùng
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 String jsonRequest = objectMapper.writeValueAsString(readerRequestDTO);
     
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/api/readers/update")) // Địa chỉ API của bạn
+                    .uri(URI.create("http://localhost:8081/api/readers/update"))
                     .header("Content-Type", "application/json")
                     .PUT(HttpRequest.BodyPublishers.ofString(jsonRequest))
                     .build();
@@ -225,9 +240,8 @@ public class UserShow extends JFrame{
     
                 if (response.statusCode() == 200) {
                     JOptionPane.showMessageDialog(editUserPanel, "Cập nhật thành công!");
-                    // Xóa thông tin trong các trường nhập liệu
                     nameField.setText("");
-                    emailField.setText("");
+                    newEmailField.setText("");
                     phoneField.setText("");
                     addressField.setText("");
                 } else {
@@ -241,6 +255,7 @@ public class UserShow extends JFrame{
     
         return editUserPanel;
     }
+    
     
     //them user(test)
     private JPanel createAddUserPanel() {
@@ -323,7 +338,7 @@ public class UserShow extends JFrame{
                         tableModel.addRow(new Object[]{
                             readerRequestDTO.getName(),
                             readerRequestDTO.getEmail(),
-                            readerRequestDTO.getPhone(),
+                            readerRequestDTO.getPhone(),    
                             readerRequestDTO.getAddress()
                         });
                     }
@@ -390,7 +405,7 @@ public class UserShow extends JFrame{
         return addUserPanel;
     }
     
-    //tim kiem sua lai model o ten email dien thoai  
+    //tim kiem sua lai model o ten email dien thoai
     private JPanel createSearchPanel() {
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm độc giả"));
@@ -399,13 +414,6 @@ public class UserShow extends JFrame{
         JButton searchButton = new JButton("Tìm kiếm");
         searchButton.setBackground(new Color(0, 155, 155));
         searchButton.setForeground(Color.WHITE);
-    
-        // Tạo model cho JTable
-        DefaultTableModel tableModel = new DefaultTableModel();
-        tableModel.addColumn("Tên");
-        tableModel.addColumn("Email");
-        tableModel.addColumn("Điện thoại");
-        tableModel.addColumn("Địa chỉ");
     
         JTable searchTable = new JTable(tableModel);
         searchTable.setFillsViewportHeight(true);
@@ -466,7 +474,7 @@ public class UserShow extends JFrame{
     
         return searchPanel;
     }
-    //xoa sua lai thayo xoa them name bang xoa theo email
+    //xoa sua lai thay o xoa them name bang xoa theo email
     private JPanel createDeleteUserPanel() {
         JPanel deleteUserPanel = new JPanel(new GridBagLayout());
         deleteUserPanel.setBorder(BorderFactory.createTitledBorder("Xóa độc giả"));
@@ -479,7 +487,7 @@ public class UserShow extends JFrame{
         JButton deleteButton = new JButton("Xóa độc giả");
     
         gbc.gridx = 0; gbc.gridy = 0;
-        deleteUserPanel.add(new JLabel("Nhập tên độc giả:"), gbc);
+        deleteUserPanel.add(new JLabel("Nhập email độc giả để xóa:"), gbc);
         gbc.gridx = 1;
         deleteUserPanel.add(deleteField, gbc);
     
@@ -489,19 +497,19 @@ public class UserShow extends JFrame{
         deleteUserPanel.add(deleteButton, gbc);
     
         deleteButton.addActionListener(e -> {
-            String nameInput = deleteField.getText().trim();
-            if (nameInput.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên độc giả.");
+            String emailInput = deleteField.getText().trim();
+            if (emailInput.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập email độc giả.");
                 return;
             }
     
             try {
-                // Gửi yêu cầu HTTP GET để tìm kiếm độc giả theo tên
+                // Gửi yêu cầu HTTP GET để tìm kiếm độc giả theo email
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/api/readers/" +deleteField.getText().trim())) 
+                    .uri(URI.create("http://localhost:8081/api/readers/" + deleteField.getText().trim())) 
                     .header("Content-Type", "application/json")
-                    .GET()
+                    .DELETE()
                     .build();
     
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -525,33 +533,5 @@ public class UserShow extends JFrame{
         return deleteUserPanel;
     }
     
-    // Phương thức để xác nhận và xóa độc giả
-    private void confirmAndDeleteUser(ReaderRequestDTO reader) {
-        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa độc giả " + reader.getName() + "?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                // Gửi yêu cầu HTTP DELETE để xóa độc giả
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/api/readers/" + reader.getName()))
-                    .header("Content-Type", "application/json")
-                    .DELETE()
-                    .build();
-    
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    
-                if (response.statusCode() == 200) {
-                    // Cập nhật lại JTable nếu xóa thành công
-                    JOptionPane.showMessageDialog(this, "Đã xóa độc giả thành công!");
-                    // Cập nhật lại dữ liệu trong bảng ở đây nếu cần
-                } else {
-                    JOptionPane.showMessageDialog(this, "Lỗi khi xóa độc giả: " + response.body());
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Có lỗi xảy ra: " + ex.getMessage());
-            }
-        }
-    }
-    
+
 }
