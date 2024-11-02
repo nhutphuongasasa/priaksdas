@@ -9,12 +9,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
-
-import java.util.List;
-import java.net.http.HttpRequest;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -28,13 +30,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
-import org.springframework.http.ResponseEntity;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import project.quanlithuvien.ungdung.DTO.*;
+import project.quanlithuvien.ungdung.DTO.ReaderDTO;
+import project.quanlithuvien.ungdung.DTO.ReaderRequestDTO;
 
 public class UserShow extends JFrame{
     private JTable table;
@@ -48,7 +48,7 @@ public class UserShow extends JFrame{
 
     private void init() {
         this.setTitle("Quản lý độc giả");
-        this.setSize(800, 600);
+        this.setSize(1000, 600);
         this.setLocationRelativeTo(null);
 
         // Card layout cho các panel
@@ -256,8 +256,7 @@ public class UserShow extends JFrame{
         return editUserPanel;
     }
     
-    
-    //them user(test)
+    //them user(xong)
     private JPanel createAddUserPanel() {
         JPanel addUserPanel = new JPanel(new GridBagLayout());
         addUserPanel.setBorder(BorderFactory.createTitledBorder("Thêm độc giả mới"));
@@ -298,7 +297,7 @@ public class UserShow extends JFrame{
         addUserButton.setForeground(Color.WHITE);
         gbc.gridx = 1; gbc.gridy = 4;
         addUserPanel.add(addUserButton, gbc);
-    
+        //them doc gia
         addUserButton.addActionListener(e -> {
             ReaderRequestDTO readerRequestDTO = new ReaderRequestDTO();
             String name = nameField.getText().trim();
@@ -332,15 +331,19 @@ public class UserShow extends JFrame{
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     
                 if (response.statusCode() == 200) {
-
+                    LocalDate date=LocalDate.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                     String responseFromSever = response.body();
                     if(responseFromSever.equals("Successfull")){
                         tableModel.addRow(new Object[]{
                             readerRequestDTO.getName(),
                             readerRequestDTO.getEmail(),
                             readerRequestDTO.getPhone(),    
-                            readerRequestDTO.getAddress()
+                            readerRequestDTO.getAddress(),
+                            date.format(formatter),
+                            "Active"
                         });
+                        JOptionPane.showMessageDialog(this,responseFromSever, "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
                     }
                     else{
                         JOptionPane.showMessageDialog(this,responseFromSever, "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
@@ -366,9 +369,10 @@ public class UserShow extends JFrame{
         printUsersButton.addActionListener(e -> {
             // Gửi HTTP GET request để lấy danh sách độc giả
             try {
+                String uri = sendUserSearchRequest(null,null,null,null);
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/api/readers")) // Địa chỉ API của bạn
+                    .uri(URI.create(uri)) // Địa chỉ API của bạn
                     .header("Content-Type", "application/json")
                     .GET()
                     .build();
@@ -378,19 +382,20 @@ public class UserShow extends JFrame{
                 // Xử lý phản hồi
                 if (response.statusCode() == 200) {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    List<ReaderRequestDTO> readers = objectMapper.readValue(response.body(),
-                            new TypeReference<List<ReaderRequestDTO>>() {});
+                    List<ReaderDTO> readers = objectMapper.readValue(response.body(),new TypeReference<List<ReaderDTO>>() {});
     
                     // Xóa tất cả dữ liệu cũ trong table model
                     tableModel.setRowCount(0);
                     
                     // Thêm dữ liệu mới vào JTable
-                    for (ReaderRequestDTO reader : readers) {
+                    for (ReaderDTO reader : readers) {
                         tableModel.addRow(new Object[]{
                             reader.getName(),
                             reader.getEmail(),
                             reader.getPhone(),
-                            reader.getAddress()
+                            reader.getAddress(),
+                            reader.getRegistration_date(),
+                            reader.getStatus()
                         });
                     }
                 } else {
@@ -405,76 +410,110 @@ public class UserShow extends JFrame{
         return addUserPanel;
     }
     
-    //tim kiem sua lai model o ten email dien thoai
+    //tim kiem (xong)
     private JPanel createSearchPanel() {
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm độc giả"));
-    
-        JTextField searchField = new JTextField();
-        JButton searchButton = new JButton("Tìm kiếm");
+
+        // Các trường thông tin độc giả
+        JTextField nameField = new JTextField();
+        JTextField emailField = new JTextField();
+        JTextField phoneField = new JTextField();
+        JTextField addressField = new JTextField();
+
+        // Đặt kích thước cho các trường thông tin
+        nameField.setPreferredSize(new Dimension(200, 30));
+        emailField.setPreferredSize(new Dimension(200, 30));
+        phoneField.setPreferredSize(new Dimension(200, 30));
+        addressField.setPreferredSize(new Dimension(200, 30));
+
+        // Panel chứa các trường thông tin độc giả
+        JPanel readerInfoPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+
+        // Các trường thông tin độc giả
+        gbc.gridx = 0; gbc.gridy = 0;
+        readerInfoPanel.add(new JLabel("Tên:"), gbc);
+        gbc.gridx = 1;
+        readerInfoPanel.add(nameField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        readerInfoPanel.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        readerInfoPanel.add(emailField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2;
+        readerInfoPanel.add(new JLabel("Điện thoại:"), gbc);
+        gbc.gridx = 1;
+        readerInfoPanel.add(phoneField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3;
+        readerInfoPanel.add(new JLabel("Địa chỉ:"), gbc);
+        gbc.gridx = 1;
+        readerInfoPanel.add(addressField, gbc);
+
+        // Thêm readerInfoPanel vào searchPanel
+        searchPanel.add(new JScrollPane(readerInfoPanel), BorderLayout.CENTER); // Đưa readerInfoPanel vào JScrollPane để có thể cuộn
+
+        // Nút tìm kiếm
+        JButton searchButton = new JButton("Tìm kiếm độc giả");
         searchButton.setBackground(new Color(0, 155, 155));
         searchButton.setForeground(Color.WHITE);
-    
-        JTable searchTable = new JTable(tableModel);
-        searchTable.setFillsViewportHeight(true);
-        
+
+        // Thêm ActionListener cho nút tìm kiếm
         searchButton.addActionListener(e -> {
-            String emailInput = searchField.getText().trim().toLowerCase();
-            tableModel.setRowCount(0); // Xóa tất cả các hàng trong bảng
-    
-            // Kiểm tra nếu email đã nhập là rỗng
-            if (emailInput.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập email để tìm kiếm.");
-                return;
-            }
-    
-            // Gửi yêu cầu HTTP GET để tìm kiếm độc giả theo email
+
             try {
+                String uri = sendUserSearchRequest(nameField.getText().trim(),emailField.getText().trim(),phoneField.getText().trim(),addressField.getText().trim());
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/api/readers/" + URLEncoder.encode(emailInput, "UTF-8"))) // Địa chỉ API tìm kiếm theo email
+                    .uri(URI.create(uri))
                     .header("Content-Type", "application/json")
                     .GET()
                     .build();
-    
+
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    
+
                 // Xử lý phản hồi
                 if (response.statusCode() == 200) {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    ReaderRequestDTO reader = objectMapper.readValue(response.body(), ReaderRequestDTO.class); // Chuyển đổi phản hồi JSON thành đối tượng ReaderRequestDTO
-    
-                    if (reader == null) {
-                        JOptionPane.showMessageDialog(this, "Không tìm thấy độc giả nào với email: " + emailInput);
+                    List<ReaderDTO> readers = objectMapper.readValue(response.body(),new TypeReference<List<ReaderDTO>>() {});
+
+                    if (readers == null) {
+                        JOptionPane.showMessageDialog(searchPanel, "Không tìm thấy độc giả");
                     } else {
-                        // Thêm thông tin độc giả vào bảng
-                        tableModel.addRow(new Object[]{
-                            reader.getName(),
-                            reader.getEmail(),
-                            reader.getPhone(),
-                            reader.getAddress()
-                        });
+                        tableModel.setRowCount(0);
+                    
+                        // Thêm dữ liệu mới vào JTable
+                        for (ReaderDTO reader : readers) {
+                            tableModel.addRow(new Object[]{
+                                reader.getName(),
+                                reader.getEmail(),
+                                reader.getPhone(),
+                                reader.getAddress(),
+                                reader.getRegistration_date(),
+                                reader.getStatus()
+                            });
+                        }
                     }
                 } else {
-                    JOptionPane.showMessageDialog(this, "Tìm kiếm không thành công: " + response.body());
+                    JOptionPane.showMessageDialog(searchPanel, "Tìm kiếm không thành công: " + response.body());
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Có lỗi xảy ra: " + ex.getMessage());
+                JOptionPane.showMessageDialog(searchPanel, "Có lỗi xảy ra: " + ex.getMessage());
             }
         });
-    
-        JPanel searchInputPanel = new JPanel(new BorderLayout());
-        searchInputPanel.add(new JLabel("Nhập email để tìm kiếm:"), BorderLayout.WEST);
-        searchInputPanel.add(searchField, BorderLayout.CENTER);
-        searchInputPanel.add(searchButton, BorderLayout.EAST);
-    
-        searchPanel.add(searchInputPanel, BorderLayout.NORTH);
-        searchPanel.add(new JScrollPane(searchTable), BorderLayout.CENTER); // Đưa JTable vào JScrollPane để có thể cuộn
-    
+
+        // Thêm nút tìm kiếm vào searchPanel, chiếm toàn bộ chiều rộng
+        searchPanel.add(searchButton, BorderLayout.SOUTH);
+
         return searchPanel;
     }
-    //xoa sua lai thay o xoa them name bang xoa theo email
+    //xoa sua (xong)
     private JPanel createDeleteUserPanel() {
         JPanel deleteUserPanel = new JPanel(new GridBagLayout());
         deleteUserPanel.setBorder(BorderFactory.createTitledBorder("Xóa độc giả"));
@@ -484,8 +523,10 @@ public class UserShow extends JFrame{
         gbc.fill = GridBagConstraints.HORIZONTAL;
     
         JTextField deleteField = new JTextField();
+        deleteField.setPreferredSize(new Dimension(200, 30));
+        
         JButton deleteButton = new JButton("Xóa độc giả");
-    
+        
         gbc.gridx = 0; gbc.gridy = 0;
         deleteUserPanel.add(new JLabel("Nhập email độc giả để xóa:"), gbc);
         gbc.gridx = 1;
@@ -518,6 +559,7 @@ public class UserShow extends JFrame{
                     String responseFromSever = response.body();
                     if(responseFromSever.equals("Successfull")){
                         tableModel.setRowCount(0);
+                        JOptionPane.showMessageDialog(this,responseFromSever, "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
                     }
                     else{
                         JOptionPane.showMessageDialog(this,responseFromSever, "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
@@ -532,6 +574,27 @@ public class UserShow extends JFrame{
     
         return deleteUserPanel;
     }
+    //gui ve (xong)
+    public String sendUserSearchRequest(String name,String email,String phone,String address){
+    StringBuilder uriBuilder = new StringBuilder("http://localhost:8081/api/readers?");
+    if (name != null && !name.isEmpty()) {
+        uriBuilder.append("name=").append(URLEncoder.encode(name, StandardCharsets.UTF_8)).append("&");
+    }
+    if (email != null && !email.isEmpty()) {
+        uriBuilder.append("email=").append(URLEncoder.encode(email, StandardCharsets.UTF_8)).append("&");
+    }
+    if (phone != null && !phone.isEmpty()) {
+        uriBuilder.append("phone=").append(URLEncoder.encode(phone, StandardCharsets.UTF_8)).append("&");
+    }
+    if (address != null && !address.isEmpty()) {
+        uriBuilder.append("address=").append(URLEncoder.encode(address, StandardCharsets.UTF_8)).append("&");
+    }
     
+    if (uriBuilder.charAt(uriBuilder.length() - 1) == '&') {
+        uriBuilder.deleteCharAt(uriBuilder.length() - 1);
+    }
+    System.out.println(uriBuilder.toString());
+    return uriBuilder.toString();
+}
 
 }

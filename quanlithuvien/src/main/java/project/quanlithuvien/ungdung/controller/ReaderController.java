@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import project.quanlithuvien.ungdung.DTO.ReaderDTO;
@@ -43,7 +44,18 @@ public class ReaderController {
     }
 
     @GetMapping
-    public List<ReaderDTO> findAllReaders(@RequestBody ReaderRequestDTO readerRequestDTO) {
+    public List<ReaderDTO> findAllReaders(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String email,
+        @RequestParam(required = false) String phone,
+        @RequestParam(required = false) String address) {
+        
+        ReaderRequestDTO readerRequestDTO = new ReaderRequestDTO();
+        readerRequestDTO.setName(name);
+        readerRequestDTO.setEmail(email);
+        readerRequestDTO.setPhone(phone);
+        readerRequestDTO.setAddress(address);
+        
         List<ReaderDTO> readers = readerService.findAllReader(readerRequestDTO);
         return readers;
     }

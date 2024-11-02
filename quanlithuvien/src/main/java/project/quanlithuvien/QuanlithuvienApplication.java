@@ -13,7 +13,6 @@ public class QuanlithuvienApplication {
         }).start();
 		Main main = new Main();
     	main.setVisible(true);
-		// SpringApplication.run(QuanlithuvienApplication.class, args);
 	}
 
 }

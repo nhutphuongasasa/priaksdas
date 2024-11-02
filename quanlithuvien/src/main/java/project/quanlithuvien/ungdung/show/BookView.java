@@ -344,14 +344,14 @@ public class BookView extends JFrame {
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm sách"));
     
-        JTextField searchField = new JTextField();
-        searchField.setPreferredSize(new Dimension(200, 30));
+        // JTextField searchField = new JTextField();
+        // searchField.setPreferredSize(new Dimension(200, 30));
         JButton searchButton = new JButton("Tìm kiếm sách");
         searchButton.setBackground(new Color(0, 155, 155));
         searchButton.setForeground(Color.WHITE);
     
         JPanel searchInputPanel = new JPanel(new BorderLayout());
-        searchInputPanel.add(searchField);
+        // searchInputPanel.add(searchField);
         searchInputPanel.add(searchButton);
         // Các trường thông tin sách
         JTextField isbnField = new JTextField();
