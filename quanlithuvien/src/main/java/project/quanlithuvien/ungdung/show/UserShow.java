@@ -33,6 +33,7 @@ import javax.swing.table.DefaultTableModel;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import project.quanlithuvien.ungdung.DTO.BookDTO;
 import project.quanlithuvien.ungdung.DTO.ReaderDTO;
 import project.quanlithuvien.ungdung.DTO.ReaderRequestDTO;
 
@@ -107,20 +108,26 @@ public class UserShow extends JFrame{
         this.add(splitPane, BorderLayout.CENTER);
         this.setVisible(true);
     }
-    //chinh sua user
+    //chinh sua user(xong)
     private JPanel createEditUserPanel() {
         JPanel editUserPanel = new JPanel(new GridBagLayout());
         editUserPanel.setBorder(BorderFactory.createTitledBorder("Chỉnh sửa độc giả"));
     
+        
+        JTextField nameField = new JTextField();
+        nameField.setPreferredSize(new Dimension(400, 30));
+        JTextField emailField = new JTextField();
+        emailField.setPreferredSize(new Dimension(400, 30));
+        JTextField newEmailField = new JTextField();
+        newEmailField.setPreferredSize(new Dimension(400, 30));
+        JTextField phoneField = new JTextField();
+        phoneField.setPreferredSize(new Dimension(400, 30));
+        JTextField addressField = new JTextField();
+        addressField.setPreferredSize(new Dimension(400, 30));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-    
-        JTextField nameField = new JTextField(80);
-        JTextField emailField = new JTextField(80);
-        JTextField newEmailField = new JTextField(80);
-        JTextField phoneField = new JTextField(80);
-        JTextField addressField = new JTextField(80);
     
         gbc.gridx = 0; gbc.gridy = 0;
         editUserPanel.add(new JLabel("Email:"), gbc);
@@ -128,25 +135,25 @@ public class UserShow extends JFrame{
         editUserPanel.add(emailField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1;
-        editUserPanel.add(new JLabel("New Email:"), gbc);
+        editUserPanel.add(new JLabel("Email mới:"), gbc);
         gbc.gridx = 1;
-        editUserPanel.add(emailField, gbc);
+        editUserPanel.add(newEmailField, gbc);
         newEmailField.setEditable(false);
     
         gbc.gridx = 0; gbc.gridy = 2;
-        editUserPanel.add(new JLabel("Name:"), gbc);
+        editUserPanel.add(new JLabel("Tên:"), gbc);
         gbc.gridx = 1;
         editUserPanel.add(nameField, gbc);
         nameField.setEditable(false); // Ban đầu không cho chỉnh sửa
     
         gbc.gridx = 0; gbc.gridy = 3;
-        editUserPanel.add(new JLabel("Phone:"), gbc);
+        editUserPanel.add(new JLabel("Điện thoại:"), gbc);
         gbc.gridx = 1;
         editUserPanel.add(phoneField, gbc);
         phoneField.setEditable(false); // Ban đầu không cho chỉnh sửa
     
         gbc.gridx = 0; gbc.gridy = 4;
-        editUserPanel.add(new JLabel("Address:"), gbc);
+        editUserPanel.add(new JLabel("Địa chỉ:"), gbc);
         gbc.gridx = 1;
         editUserPanel.add(addressField, gbc);
         addressField.setEditable(false); // Ban đầu không cho chỉnh sửa
@@ -159,53 +166,57 @@ public class UserShow extends JFrame{
         JButton editUserButton = new JButton("Chỉnh sửa");
         editUserButton.setBackground(new Color(0, 155, 155));
         editUserButton.setForeground(Color.WHITE);
-        gbc.gridx = 1; gbc.gridy = 6;
+        gbc.gridx = 0; gbc.gridy = 6;
         editUserPanel.add(editUserButton, gbc);
         editUserButton.setEnabled(false); // Ban đầu tắt nút chỉnh sửa
     
         // Sự kiện cho nút tìm kiếm
-        // searchButton.addActionListener(e -> {
-        //     String emailInput = emailField.getText().trim();
-        //     if (emailInput.isEmpty()) {
-        //         JOptionPane.showMessageDialog(editUserPanel, "Vui lòng nhập email.");
-        //         return;
-        //     }
+        searchButton.addActionListener(e -> {
+            String emailInput = emailField.getText().trim();
+            if (emailInput.isEmpty()) {
+                JOptionPane.showMessageDialog(editUserPanel, "Vui lòng nhập email.");
+                return;
+            }
     
-        //     // Gửi yêu cầu tìm kiếm đến API
-        //     try {
-        //         HttpClient client = HttpClient.newHttpClient();
-        //         HttpRequest request = HttpRequest.newBuilder()
-        //             .uri(URI.create("http://localhost:8081/api/readers/" + URLEncoder.encode(emailInput, "UTF-8")))
-        //             .header("Content-Type", "application/json")
-        //             .GET()
-        //             .build();
+            // Gửi yêu cầu tìm kiếm đến API
+            try {
+                String uri = sendUserSearchRequest(null,emailInput,null,null);
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(uri))
+                    .header("Content-Type", "application/json")
+                    .GET()
+                    .build();
     
-        //         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     
-        //         if (response.statusCode() == 200) {
-        //             ObjectMapper objectMapper = new ObjectMapper();
-        //             ReaderRequestDTO reader = objectMapper.readValue(response.body(), ReaderRequestDTO.class);
-    
-        //             // Điền thông tin vào các trường
-        //             nameField.setText(reader.getName());
-        //             phoneField.setText(reader.getPhone());
-        //             newEmailField.setText(reader.getEmail());
-        //             addressField.setText(reader.getAddress());
-    
-        //             // Cho phép chỉnh sửa các trường và bật nút chỉnh sửa
-        //             nameField.setEditable(true);
-        //             phoneField.setEditable(true);
-        //             addressField.setEditable(true);
-        //             newEmailField.setEditable(true);
-        //             editUserButton.setEnabled(true);
-        //         } else {
-        //             JOptionPane.showMessageDialog(editUserPanel, "Không tìm thấy email: " + emailInput);
-        //         }
-        //     } catch (Exception ex) {
-        //         ex.printStackTrace();
-        //         JOptionPane.showMessageDialog(editUserPanel, "Có lỗi xảy ra: " + ex.getMessage());
-        //     }
-        // });
+                if (response.statusCode() == 200) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    List<ReaderDTO> readers = objectMapper.readValue(response.body(), objectMapper.getTypeFactory().constructCollectionType(List.class, ReaderDTO.class));
+                    if(readers!=null){
+                        ReaderDTO reader = readers.get(0);
+                        nameField.setEditable(true);
+                        phoneField.setEditable(true);
+                        addressField.setEditable(true);
+                        newEmailField.setEditable(true);
+                        editUserButton.setEnabled(true);
+
+                        // Điền thông tin vào các trường
+                        nameField.setText(reader.getName());
+                        phoneField.setText(reader.getPhone());
+                        newEmailField.setText(reader.getEmail());
+                        addressField.setText(reader.getAddress());
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(editUserPanel, "không có thông tin " );
+                    }
+                    
+                } 
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(editUserPanel, "Có lỗi xảy ra: " + ex.getMessage());
+            }
+        });
     
         // Thêm ActionListener cho nút chỉnh sửa
         editUserButton.addActionListener(e -> {
@@ -231,21 +242,21 @@ public class UserShow extends JFrame{
     
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/api/readers/update"))
+                    .uri(URI.create("http://localhost:8081/api/readers/"+emailField.getText().trim()))
                     .header("Content-Type", "application/json")
                     .PUT(HttpRequest.BodyPublishers.ofString(jsonRequest))
                     .build();
     
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     
-                if (response.statusCode() == 200) {
-                    JOptionPane.showMessageDialog(editUserPanel, "Cập nhật thành công!");
+                if (response.statusCode() == 200&&response.body().equals("Successfull")) {
+                    JOptionPane.showMessageDialog(editUserPanel, response.body());
                     nameField.setText("");
                     newEmailField.setText("");
                     phoneField.setText("");
                     addressField.setText("");
                 } else {
-                    JOptionPane.showMessageDialog(editUserPanel, "Cập nhật không thành công: " + response.body());
+                    JOptionPane.showMessageDialog(editUserPanel,  response.body());
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

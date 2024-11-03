@@ -25,7 +25,7 @@ public class LoanServiceImpl implements LoanService{
     }
 
     @Override
-    public String completeLoan(List<Integer> loan_id) {
+    public String completeLoan(Integer loan_id) {
         String result = loanRepository.completeLoan(loan_id);
         return  result;
     }
@@ -41,7 +41,7 @@ public class LoanServiceImpl implements LoanService{
     }
 
     @Override
-    public String deleteloan(List<Integer> loan_id) {
+    public String deleteloan(Integer loan_id) {
         String result = loanRepository.deleteLoan(loan_id);
         return result;
     }

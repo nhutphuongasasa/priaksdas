@@ -1,6 +1,5 @@
 package project.quanlithuvien.ungdung.Service.Impl;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public List<CategoryDTO> findAllCategory() {
         List<CategoryDTO> CategoryDTOs = categoryRepository.findAllCategory();
-        Collections.sort(CategoryDTOs);
         return CategoryDTOs;
     }
 

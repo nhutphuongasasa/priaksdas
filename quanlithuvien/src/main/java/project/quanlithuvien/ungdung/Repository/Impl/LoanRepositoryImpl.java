@@ -1,6 +1,7 @@
 package project.quanlithuvien.ungdung.Repository.Impl;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,24 +53,23 @@ public class LoanRepositoryImpl implements LoanRepository{
     }
 
     @Override
-    public String completeLoan(List<Integer> loan_id) {//lam table co nut tra sach khi check vao se gui id ve va ham se thuc hien xoa
-        for(Integer item : loan_id){
-            LoanEntity loanEntity = entityManager.find(LoanEntity.class, item);
-            if(loanEntity.getStatus().equals("CHƯA_TRẢ")){
-                loanEntity.setStatus("ĐÃ_TRẢ");
-                entityManager.merge(loanEntity);
-            }
+    public String completeLoan(Integer loan_id) {//lam table co nut tra sach khi check vao se gui id ve va ham se thuc hien xoa
+        LoanEntity loanEntity = entityManager.find(LoanEntity.class, loan_id);
+        if(loanEntity.getStatus().equals("CHƯA_TRẢ")){
+            loanEntity.setStatus("ĐÃ_TRẢ");
+            LocalDate return_date= LocalDate.now();
+            loanEntity.setReturn_date(return_date);
+            entityManager.merge(loanEntity);
+            return "Successfull";
         }
-        return "Successfull";
+        return "Sách đã được trả trước đó";
     }
 
     @Override
-    public String deleteLoan(List<Integer> loan_id) {//lam table co nut tra sach khi check vao se gui id ve va ham se thuc hien xoa
-        for(Integer item : loan_id){
-            LoanEntity loanEntity = entityManager.find(LoanEntity.class, item);
-            if(loanEntity.getStatus().equals("ĐÃ_TRẢ")){
-                entityManager.remove(loanEntity);
-            }
+    public String deleteLoan(Integer loan_id) {//lam table co nut tra sach khi check vao se gui id ve va ham se thuc hien xoa
+        LoanEntity loanEntity = entityManager.find(LoanEntity.class, loan_id);
+        if(loanEntity.getStatus().equals("ĐÃ_TRẢ")){
+            entityManager.remove(loanEntity);
         }
         return "Successfull";
     }

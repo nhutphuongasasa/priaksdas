@@ -37,15 +37,16 @@ public class LibraryStaffServiceImpl implements LibraryStaffService{
 
     @Override
     public String Login(String userName, String password) {
-        LibraryStaffEntity existingStaff = libraryStaffEntityFind.findLibraryStaffEntityByUserName(userName);
+        List<LibraryStaffEntity> existingStaff = libraryStaffEntityFind.findListLibraryStaffEntityByUserName(userName);
         if(existingStaff==null){
             return "user or password incorrect";
         }
-    
-        if(!passwordEncoder.matches(password,existingStaff.getPassword())) {
-            return "user or password incorrect";
+        for(LibraryStaffEntity item : existingStaff){
+            if(passwordEncoder.matches(password, item.getPassword())){
+                return "Successfull";
+            }
         }
-        return "Successful";
+        return "user or password incorrect";
     }
 
     

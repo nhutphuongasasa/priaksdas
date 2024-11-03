@@ -1,19 +1,34 @@
 package project.quanlithuvien.ungdung.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+public class CategoryDTO {
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class CategoryDTO implements Comparable<CategoryDTO> {
     private String name;
+    private Integer category_id;
 
-    @Override
-    public int compareTo(CategoryDTO o) {
-        return this.getName().compareTo(o.getName());
+    // Constructor mặc định
+    public CategoryDTO() {
     }
 
-    
+    // Constructor với hai tham số
+    public CategoryDTO(String name, Integer category_id) {
+        this.name = name;
+        this.category_id = category_id;
+    }
+
+    // Getter và Setter
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getCategory_id() {
+        return category_id;
+    }
+
+    public void setCategory_id(Integer category_id) {
+        this.category_id = category_id;
+    }
 }

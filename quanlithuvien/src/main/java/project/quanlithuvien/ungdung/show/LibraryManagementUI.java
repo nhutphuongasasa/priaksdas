@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 public class LibraryManagementUI extends JFrame {
     
-    public LibraryManagementUI() {
+    public LibraryManagementUI(String role) {
         setTitle("Quản Lý Thư Viện");
         setSize(1200, 600);
         setLocationRelativeTo(null);
@@ -60,7 +60,12 @@ public class LibraryManagementUI extends JFrame {
         staffButton.setBackground(new Color(0, 204, 204));
         staffButton.setForeground(Color.WHITE);
         staffButton.addActionListener(e -> switchToNewInterface(new StaffShow()));
-
+        if(role.equals("Staff")){
+            staffButton.setVisible(false);
+        }
+        else{
+            staffButton.setVisible(true);
+        }
         JButton exitButton = new JButton("Thoát chương trình");
         exitButton.setFont(new Font("Arial", Font.BOLD, 18));
         exitButton.setBackground(new Color(255, 0, 0)); 

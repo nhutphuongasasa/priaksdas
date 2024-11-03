@@ -7,7 +7,7 @@ import project.quanlithuvien.ungdung.DTO.LoanRequestDTO;
 
 public interface  LoanService {
     String addLoan(LoanRequestDTO loanRequestDTO);
-    String completeLoan(List<Integer> loan_id);
-    String deleteloan(List<Integer> loan_id);
+    String completeLoan(Integer loan_id);
+    String deleteloan(Integer loan_id);
     List<LoanDTO> findAllLoan(LoanRequestDTO loanRequestDTO);
 }

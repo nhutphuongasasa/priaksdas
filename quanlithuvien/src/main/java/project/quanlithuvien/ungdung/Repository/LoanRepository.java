@@ -7,7 +7,7 @@ import project.quanlithuvien.ungdung.Model.LoanEntity;
 
 public interface  LoanRepository {
     String addLoan(LoanRequestDTO loanRequestDTO);
-    String completeLoan(List<Integer> loan_id);
+    String completeLoan(Integer loan_id);
     List<LoanEntity> findAllLoan(LoanRequestDTO loanRequestDTO);
-    String deleteLoan(List<Integer> loan_id);
+    String deleteLoan(Integer loan_id);
 }

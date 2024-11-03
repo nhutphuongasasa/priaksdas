@@ -1,5 +1,7 @@
 package project.quanlithuvien.ungdung.Utils;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.EntityManager;
@@ -27,5 +29,10 @@ public class LibraryStaffEntityFind {
         Query query = entityManager.createNativeQuery(sql,LibraryStaffEntity.class);
         return (LibraryStaffEntity)query.getResultList().stream().findFirst().orElse(null);
     }
-
+    
+    public List<LibraryStaffEntity> findListLibraryStaffEntityByUserName(String user_name){
+        String sql = "select * from library_staff where library_staff.user_name like '"+user_name+"' ";
+        Query query = entityManager.createNativeQuery(sql,LibraryStaffEntity.class);
+        return query.getResultList();
+    }
 }

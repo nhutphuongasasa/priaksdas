@@ -11,10 +11,9 @@ import project.quanlithuvien.ungdung.Model.CategoryEntity;
 public class CategoryEntityFind {
     @PersistenceContext
     private EntityManager entityManager;
-    public CategoryEntity findAllByName(String name){
-        String sql = "select * from categories where categories.name like '"+name+"'";
+    public CategoryEntity findAllByName(String id){
+        String sql = "select * from categories where categories.category_id like '"+id+"'";
         Query query = entityManager.createNativeQuery(sql,CategoryEntity.class);
-        System.out.println("oke CategoryEntityFind");
         try {
             // Lấy kết quả đầu tiên
             return (CategoryEntity) query.getSingleResult();

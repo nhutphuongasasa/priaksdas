@@ -24,19 +24,20 @@ public class CategoryController {
 
     @PostMapping
     public String addCategory(@RequestBody String name) {
-        return categoryService.addCategory(name);
+        String namecopy = name.substring(1,name.length()-1);
+        return categoryService.addCategory(namecopy);
     }
 
-    @DeleteMapping("/{name}")
-    public String deleteCategory(@PathVariable String name) {
-        return categoryService.deleteCategory(name);
+    @DeleteMapping("/{id}")
+    public String deleteCategory(@PathVariable String id) {
+        return categoryService.deleteCategory(id);
         
     }
 
     @PutMapping("/{nameToUpdate}")
     public String updateCategory(@PathVariable String nameToUpdate, @RequestBody String name) {
-        System.out.println(name);
-        return categoryService.updateCategory(nameToUpdate, name);
+        String namecopy = name.substring(1,name.length()-1);
+        return categoryService.updateCategory(nameToUpdate, namecopy);
         
     }
 

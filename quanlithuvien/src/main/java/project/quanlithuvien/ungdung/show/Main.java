@@ -7,22 +7,32 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import project.quanlithuvien.ungdung.DTO.Login;
+
 public class Main extends JFrame {
+
     public Main() {
         initUI();
     }
 
     private void initUI() {
         setTitle("Chương trình quản lý thư viện");
-        setSize(1200, 600);
+        setSize(1000, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -51,9 +61,7 @@ public class Main extends JFrame {
         exitButton.setForeground(Color.WHITE);
         exitButton.addActionListener(e -> System.exit(0));
 
-        loginButton.addActionListener(e -> switchToLibraryManagementUI());
-
-        styleButton(loginButton);
+        
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -79,6 +87,47 @@ public class Main extends JFrame {
         gbc.gridx = 1;
         loginPanel.add(exitButton, gbc);
 
+        loginButton.addActionListener(e -> {
+             try {
+                Login login = new Login();
+                login.setPassword(String.valueOf(passwordField.getPassword()));
+                login.setUser_name(usernameField.getText().trim());
+                if(login.getUser_name()==null || login.getUser_name().isEmpty() || login.getPassword().isEmpty()||login.getPassword()==null){
+                    JOptionPane.showMessageDialog(this, "Vui òng nhập đầy đủ thông tin");
+                }
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonRequest = objectMapper.writeValueAsString(login);
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8081/api/admin/login")) // Địa chỉ API của bạn
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest))
+                .build();
+    
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                String responseFromSever = response.body();
+                if (response.statusCode() == 200) {
+                    if(responseFromSever.equals("Admin")){
+                        switchToLibraryManagementUI("Admin");
+                    }else if(responseFromSever.equals("Staff")){
+                        switchToLibraryManagementUI("Staff");
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(this, responseFromSever);
+                    }
+                }
+                else{
+                    JOptionPane.showMessageDialog(this, responseFromSever); 
+                }  
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "error");
+            }
+        
+        });
+
+        styleButton(loginButton);
+
         return loginPanel;
     }
 
@@ -89,10 +138,10 @@ public class Main extends JFrame {
         button.setForeground(Color.WHITE);
     }
 
-    private void switchToLibraryManagementUI() {
+    private void switchToLibraryManagementUI(String role) {
         this.setVisible(false); // Ẩn `Main`
         
-        LibraryManagementUI libraryManagementUI = new LibraryManagementUI();
+        LibraryManagementUI libraryManagementUI = new LibraryManagementUI(role);
         libraryManagementUI.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -103,11 +152,5 @@ public class Main extends JFrame {
         libraryManagementUI.setVisible(true); // Hiển thị `LibraryManagementUI`
     }
 
-    // public static void main(String[] args) {
-    //     SwingUtilities.invokeLater(() -> {
-    //         Main main = new Main();
-    //         main.setVisible(true);
-    //         System.out.println("Chạy chương trình thành công");
-    //     });
-    // }
+    
 }

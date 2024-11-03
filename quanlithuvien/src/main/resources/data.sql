@@ -6,7 +6,7 @@ VALUES
 
 INSERT INTO admins (user_name, password, name, email, phone, role_id) 
 VALUES 
-    ('adminUser', '$2a$10$iLBIf2EpjQy.8ggfqiLxUOanRUjzL7N6PzoeB5YGGGjMotLXCuJLK', 'admin', 'admin@example.com', '12345678', 1);
+    ('adminUser', '$2a$10$RYftainXSYA87cHT4qzkCOdl9Bz.TptzKfJuua.sh0p24PzzbEkda', 'admin', 'admin@example.com', '12345678', 1);
 
 INSERT INTO books (title, author, publisher, publication_year, isbn, quantity, available_quantity) 
 VALUES 

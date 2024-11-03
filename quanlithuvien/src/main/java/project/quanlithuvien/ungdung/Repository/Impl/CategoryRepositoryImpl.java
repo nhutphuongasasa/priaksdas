@@ -34,9 +34,8 @@ public class CategoryRepositoryImpl implements CategoryRepository{
     }
 
     @Override
-    public String deleteCategory(String name) {//nguoi dung nhap name can xoa
-        System.out.println(name);
-        CategoryEntity categoryEntity = categoryEntityFind.findAllByName(name);
+    public String deleteCategory(String id) {//nguoi dung nhap name can xoa
+        CategoryEntity categoryEntity = EntityManager.find(CategoryEntity.class, id);
         if(categoryEntity == null){
             return "category does not exist";
         }
@@ -50,7 +49,7 @@ public class CategoryRepositoryImpl implements CategoryRepository{
 
     @Override
     public List<CategoryDTO> findAllCategory() {//nguoi dung co the nhap name hoac khong
-        String sql ="select ca.name from categories ca ";
+        String sql ="select ca.name,ca.category_id from categories ca ";
         Query query = EntityManager.createNativeQuery(sql, CategoryDTO.class);
         return query.getResultList();
     }
